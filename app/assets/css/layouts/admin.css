@@ -1,0 +1,37 @@
+/* ── Admin layout wrapper ── */
+.admin-wrap {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-sunken);
+}
+
+.admin-main {
+  flex: 1;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 32px 32px 80px;
+}
+
+/* ── Admin nav ──
+   Visual styling (card look, brand, links, user menu) comes from the
+   shared `.nav` class in shared/layout.css, so the admin nav matches the
+   public nav's design language exactly. `.admin-nav` only adds sticky
+   positioning and outer spacing on top of that. */
+.admin-nav {
+  position: sticky;
+  top: 16px;
+  z-index: 100;
+  max-width: 1200px;
+  width: calc(100% - 64px);
+  margin: 16px auto 0;
+}
+
+@media (max-width: 900px) {
+  .admin-nav {
+    width: calc(100% - 40px);
+    top: 12px;
+  }
+  .admin-main { padding: 24px 20px 60px; }
+}

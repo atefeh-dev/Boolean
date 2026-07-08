@@ -1,0 +1,95 @@
+// Prisma schema — foundation for سایدبار's backend.
+// Run `npx prisma generate` after install, then `npx prisma migrate dev --name init`.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum LinkStatus {
+  PENDING
+  PUBLISHED
+  REJECTED
+}
+
+model NewsletterSend {
+  id            String   @id @default(uuid())
+  recipients    Int
+  linkCount     Int
+  sentAt        DateTime @default(now())
+
+  @@map("newsletter_sends")
+}
+
+model Subscriber {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+
+  @@map("subscribers")
+}
+
+model PasswordResetToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+
+  @@map("password_reset_tokens")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(USER)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  links Link[]
+  resetTokens PasswordResetToken[]
+
+  @@map("users")
+}
+
+model Category {
+  id    String @id // slug, e.g. "ux", "ai" — matches existing frontend ids
+  label String
+
+  links Link[]
+
+  @@map("categories")
+}
+
+model Link {
+  id          String     @id @default(uuid())
+  url         String
+  title       String
+  body        String?
+  credit      String?
+  status      LinkStatus @default(PENDING)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  publishedAt DateTime?
+  notifiedAt  DateTime?
+
+  submittedBy   User?   @relation(fields: [submittedById], references: [id])
+  submittedById String?
+
+  categories Category[]
+
+  @@index([status])
+  @@map("links")
+}

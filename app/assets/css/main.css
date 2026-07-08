@@ -1,0 +1,12 @@
+/* Global design system and home page styles */
+@import './shared/base.css';
+@import './shared/layout.css';
+@import './components/hero.css';
+@import './components/issues.css';
+@import './components/page-hero.css';
+@import './pages/archives.css';
+@import './pages/categories.css';
+@import './pages/submit.css';
+@import './pages/auth.css';
+@import './pages/admin.css';
+@import './layouts/admin.css';

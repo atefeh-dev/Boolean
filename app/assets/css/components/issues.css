@@ -1,0 +1,163 @@
+/* ── Section heading ── */
+      .section-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        margin-bottom: 28px;
+      }
+      .section-head h2 {
+        font-size: 1.5rem;
+        font-weight: 800;
+      }
+      .section-head a {
+        font-size: 0.875rem;
+        font-weight: 700;
+        color: var(--clay);
+      }
+
+      /* ── Day sheet ── */
+      .day {
+        background: var(--surface);
+        border-radius: 24px;
+        padding: 40px 44px;
+        margin-bottom: 32px;
+        box-shadow: 0 8px 24px rgba(33, 29, 23, 0.06);
+      }
+      .day__meta {
+        display: flex;
+        align-items: baseline;
+        gap: 14px;
+        margin-bottom: 28px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid var(--line);
+      }
+      .day__weekday {
+        font-size: 1.25rem;
+        font-weight: 800;
+      }
+      .day__date {
+        font-family: var(--font-meta);
+        font-style: italic;
+        font-size: 0.9375rem;
+        color: var(--ink-faint);
+      }
+
+      .link-row {
+        display: flex;
+        gap: 20px;
+        padding: 22px 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .link-row:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+      }
+      .link-row:first-child {
+        padding-top: 0;
+      }
+      .link-row__chip {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        background: var(--surface-sunken);
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .link-row__chip svg {
+        width: 20px;
+        height: 20px;
+        stroke: var(--forest);
+      }
+      .link-row__body {
+        flex: 1;
+        min-width: 0;
+      }
+      .link-row__domain {
+        font-family: var(--font-meta);
+        font-style: italic;
+        font-size: 0.8125rem;
+        color: var(--ink-faint);
+        direction: ltr;
+        text-align: right;
+        display: block;
+        margin-bottom: 4px;
+      }
+      .link-row__title {
+        font-size: 1.0625rem;
+        font-weight: 700;
+        margin-bottom: 6px;
+        line-height: 1.5;
+      }
+      .link-row__title a:hover {
+        color: var(--clay);
+      }
+      .link-row__desc {
+        font-size: 0.9375rem;
+        color: var(--ink-soft);
+        margin-bottom: 12px;
+      }
+      .link-row__tags {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .tag {
+        font-size: 0.75rem;
+        font-weight: 600;
+        padding: 4px 12px;
+        border-radius: 999px;
+        background: var(--clay-soft);
+        color: #8a3f23;
+      }
+
+      /* ── Bottom CTA ── */
+      .cta {
+        background: var(--forest);
+        border-radius: 32px;
+        padding: 56px;
+        text-align: center;
+        margin: 16px 0 64px;
+      }
+      .cta h2 {
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: #fff;
+        margin-bottom: 12px;
+      }
+      .cta p {
+        color: rgba(246, 241, 231, 0.75);
+        margin-bottom: 28px;
+      }
+      .cta__form {
+        display: flex;
+        gap: 10px;
+        max-width: 420px;
+        margin: 0 auto;
+      }
+      .cta__form input {
+        flex: 1;
+        padding: 14px 20px;
+        border-radius: 999px;
+        border: none;
+        font-family: var(--font);
+        font-size: 0.9375rem;
+        outline: none;
+        direction: ltr;
+        text-align: right;
+      }
+      .cta__form button {
+        padding: 14px 26px;
+        border-radius: 999px;
+        border: none;
+        background: var(--clay);
+        color: #fff;
+        font-family: var(--font);
+        font-size: 0.9375rem;
+        font-weight: 700;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+
+      

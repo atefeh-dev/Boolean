@@ -1,0 +1,285 @@
+/* ── Page hero ── */
+      .page-hero {
+        background:
+          radial-gradient(
+            ellipse 70% 55% at 92% 8%,
+            rgba(211, 162, 64, 0.22) 0%,
+            transparent 55%
+          ),
+          radial-gradient(
+            ellipse 55% 45% at 4% 92%,
+            rgba(184, 93, 62, 0.16) 0%,
+            transparent 50%
+          ),
+          linear-gradient(
+            145deg,
+            #0f221c 0%,
+            #173027 28%,
+            #24483d 52%,
+            #2d5c4e 78%,
+            #1a3d34 100%
+          );
+        border: 1px solid rgba(255, 253, 248, 0.1);
+        border-radius: 32px;
+        padding: 48px 56px;
+        margin: 12px 0 48px;
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 32px;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+        box-shadow:
+          0 28px 72px rgba(15, 34, 28, 0.38),
+          inset 0 1px 0 rgba(255, 253, 248, 0.08);
+      }
+      .page-hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background:
+          radial-gradient(
+            circle at 78% 22%,
+            rgba(255, 253, 248, 0.07) 0%,
+            transparent 32%
+          ),
+          linear-gradient(
+            180deg,
+            rgba(255, 253, 248, 0.04) 0%,
+            transparent 40%
+          );
+      }
+      .page-hero > * {
+        position: relative;
+        z-index: 1;
+      }
+      .page-hero__eyebrow {
+        font-family: var(--font-meta);
+        font-style: italic;
+        font-size: 0.9375rem;
+        color: var(--gold);
+        margin-bottom: 14px;
+      }
+      .page-hero__title {
+        font-size: clamp(2rem, 3.5vw, 2.75rem);
+        font-weight: 800;
+        line-height: 1.3;
+        color: #fff8ec;
+        margin-bottom: 14px;
+      }
+      .page-hero__desc {
+        font-size: 1.0625rem;
+        color: rgba(246, 241, 231, 0.78);
+        max-width: 440px;
+      }
+      .page-hero__art {
+        width: 100%;
+        height: 100%;
+      }
+
+      /* ── Controls ── */
+      .controls {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        margin-bottom: 40px;
+      }
+      .search-field {
+        position: relative;
+        display: flex;
+        align-items: center;
+      }
+      .search-field__icon {
+        position: absolute;
+        right: 20px;
+        width: 18px;
+        height: 18px;
+        color: var(--ink-faint);
+        pointer-events: none;
+      }
+      .search-input {
+        width: 100%;
+        padding: 14px 50px 14px 20px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        font-family: var(--font);
+        font-size: 0.9375rem;
+        outline: none;
+        background: var(--surface);
+        direction: rtl;
+        color: var(--ink);
+        transition:
+          border-color 0.15s,
+          box-shadow 0.15s;
+      }
+      .search-input:focus {
+        border-color: var(--clay);
+        box-shadow: 0 0 0 4px rgba(193, 98, 60, 0.12);
+      }
+
+      /* ── Pill cloud filter bar — wraps instead of scrolling, since the
+   12 categories are a fixed, fully-known set: better to let people scan
+   all of them at once than hide most behind an undiscoverable scroll. ── */
+      .filter-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .chip {
+        flex: 0 0 auto;
+        padding: 9px 18px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: var(--surface);
+        color: var(--ink-soft);
+        font-family: var(--font);
+        font-size: 0.875rem;
+        font-weight: 600;
+        white-space: nowrap;
+        cursor: pointer;
+        transition:
+          background 0.15s,
+          color 0.15s,
+          border-color 0.15s,
+          transform 0.1s;
+      }
+      .chip:hover {
+        border-color: var(--clay);
+        color: var(--clay);
+      }
+      .chip:active {
+        transform: scale(0.96);
+      }
+      .chip--active {
+        background: var(--forest);
+        border-color: var(--forest);
+        color: #fff;
+      }
+      .chip--active:hover {
+        color: #fff;
+      }
+
+      /* ── Month group ── */
+      .month-group {
+        margin-bottom: 44px;
+      }
+      .month-heading {
+        font-size: 1.125rem;
+        font-weight: 800;
+        color: var(--ink);
+        margin-bottom: 18px;
+      }
+
+      /* ── Issue card ── */
+      .archive-issue {
+        background: var(--surface);
+        border-radius: 24px;
+        padding: 28px 32px;
+        margin-bottom: 16px;
+        box-shadow: 0 8px 24px rgba(33, 29, 23, 0.06);
+        display: grid;
+        grid-template-columns: 120px 1fr;
+        gap: 24px;
+        align-items: start;
+      }
+      .issue-date {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        padding-top: 2px;
+      }
+      .issue-date-weekday {
+        font-size: 1.0625rem;
+        font-weight: 800;
+      }
+      .issue-date-persian {
+        font-size: 0.875rem;
+        color: var(--ink-faint);
+      }
+      .issue-links-preview {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .preview-link {
+        display: flex;
+        align-items: baseline;
+        gap: 12px;
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--ink);
+        line-height: 1.5;
+        transition: color 0.15s;
+      }
+      .preview-link:hover {
+        color: var(--clay);
+      }
+      .preview-rank {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--forest);
+        background: var(--surface-sunken);
+        border-radius: 50%;
+        width: 22px;
+        height: 22px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .preview-domain {
+        font-family: var(--font-meta);
+        font-style: italic;
+        font-size: 0.8125rem;
+        color: var(--ink-faint);
+        font-weight: 400;
+        direction: ltr;
+      }
+      .see-all {
+        font-size: 0.875rem;
+        color: var(--clay);
+        font-weight: 700;
+        margin-top: 4px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .see-all:hover {
+        opacity: 0.75;
+      }
+      .no-results {
+        text-align: center;
+        padding: 60px 0;
+        color: var(--ink-faint);
+        display: none;
+      }
+      .no-results.visible {
+        display: block;
+      }
+
+@media (max-width: 860px) {
+        .page-hero {
+          grid-template-columns: 1fr;
+          padding: 40px 32px;
+        }
+        .page-hero__art {
+          display: none;
+        }
+        .wrap {
+          padding: 0 20px;
+        }
+        .controls {
+          flex-direction: column;
+        }
+        .archive-issue {
+          grid-template-columns: 1fr;
+          gap: 16px;
+          padding: 24px;
+        }
+      }
+      @media (max-width: 520px) {
+        .nav__links {
+          gap: 18px;
+        }
+      }

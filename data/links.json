@@ -1,0 +1,113 @@
+{
+  "categories": [
+    { "id": "ux", "label": "تجربه کاربری" },
+    { "id": "ui", "label": "رابط کاربری" },
+    { "id": "tools", "label": "ابزارها" },
+    { "id": "typography", "label": "تایپوگرافی" },
+    { "id": "ai", "label": "هوش مصنوعی" },
+    { "id": "design-systems", "label": "سیستم طراحی" },
+    { "id": "inspiration", "label": "الهام‌بخش" },
+    { "id": "resources", "label": "منابع" },
+    { "id": "accessibility", "label": "دسترس‌پذیری" },
+    { "id": "programming", "label": "برنامه‌نویسی" },
+    { "id": "case-study", "label": "مطالعه موردی" },
+    { "id": "reflections", "label": "تأملات" }
+  ],
+  "issues": [
+    {
+      "weekday": "یکشنبه",
+      "date": "۲۶ خرداد ۱۴۰۳",
+      "links": [
+        {
+          "url": "https://uxdesign.cc/how-product-design-is-changing-with-ai",
+          "domain": "uxdesign.cc",
+          "title": "چگونه طراحی محصول با هوش مصنوعی تغییر می‌کند",
+          "description": "نگاهی به اینکه ابزارهای هوش مصنوعی چطور نقش طراح را بازتعریف می‌کنند و چه مهارت‌هایی اهمیت بیشتری پیدا می‌کنند.",
+          "categories": ["ux", "ai"]
+        },
+        {
+          "url": "https://www.smashingmagazine.com/color-systems",
+          "domain": "smashingmagazine.com",
+          "title": "راهنمای کامل سیستم رنگ در طراحی",
+          "description": "چطور یک پالت رنگ مقیاس‌پذیر بسازیم که هم زیبا باشد و هم در عمل کار کند.",
+          "categories": ["design-systems", "ui"]
+        },
+        {
+          "url": "https://www.figma.com/blog/new-features-2024",
+          "domain": "figma.com",
+          "title": "فیگما ۲۰۲۴: ویژگی‌هایی که باید بدانید",
+          "description": "مرور سریع مهم‌ترین قابلیت‌های تازه فیگما برای جریان کاری روزمره.",
+          "categories": ["tools"]
+        },
+        {
+          "url": "https://www.nngroup.com/articles/mobile-accessibility",
+          "domain": "nngroup.com",
+          "title": "اصول دسترس‌پذیری در طراحی موبایل",
+          "description": "چک‌لیست کاربردی برای ساختن تجربه‌های موبایلی که برای همه قابل استفاده باشند.",
+          "categories": ["accessibility", "ux"]
+        },
+        {
+          "url": "https://type-network.com/variable-fonts-rtl",
+          "domain": "type-network.com",
+          "title": "فونت‌های متغیر برای رابط‌های فارسی",
+          "description": "چرا فونت‌های متغیر برای متن راست‌به‌چپ یک تحول واقعی هستند.",
+          "categories": ["typography", "resources"]
+        }
+      ]
+    },
+    {
+      "weekday": "شنبه",
+      "date": "۲۵ خرداد ۱۴۰۳",
+      "links": [
+        {
+          "url": "https://uxdesign.cc/why-design-systems-fail",
+          "domain": "uxdesign.cc",
+          "title": "چرا سیستم‌های طراحی شکست می‌خورند",
+          "description": "سه دلیل رایجی که باعث می‌شود سیستم‌های طراحی به جای کمک، مانع شوند.",
+          "categories": ["design-systems", "ux"]
+        },
+        {
+          "url": "https://dribbble.com/summer-color-palettes-2024",
+          "domain": "dribbble.com",
+          "title": "ترکیب رنگ‌های پرطرفدار تابستان ۲۰۲۴",
+          "description": "مجموعه‌ای از پالت‌های گرم و دلنشین برای پروژه‌های فصلی.",
+          "categories": ["inspiration", "ui"]
+        },
+        {
+          "url": "https://type-network.com/variable-fonts-rtl",
+          "domain": "type-network.com",
+          "title": "فونت‌های متغیر برای رابط‌های فارسی",
+          "description": "راهنمای عملی استفاده از فونت‌های متغیر در محصولات راست‌به‌چپ.",
+          "categories": ["typography", "accessibility"]
+        }
+      ]
+    },
+    {
+      "weekday": "جمعه",
+      "date": "۲۴ خرداد ۱۴۰۳",
+      "links": [
+        {
+          "url": "https://www.smashingmagazine.com/dark-mode-beyond-invert",
+          "domain": "smashingmagazine.com",
+          "title": "طراحی برای حالت تاریک: فراتر از معکوس کردن رنگ‌ها",
+          "description": "اصول واقعی ساختن یک حالت تاریک خوانا و چشم‌نواز.",
+          "categories": ["ui", "ux"]
+        },
+        {
+          "url": "https://www.nngroup.com/articles/least-surprise-forms",
+          "domain": "nngroup.com",
+          "title": "اصل کمترین شگفتی در طراحی فرم‌ها",
+          "description": "چطور فرم‌هایی بسازیم که کاربر بدون فکر کردن آن‌ها را پر کند.",
+          "categories": ["ux", "programming"]
+        },
+        {
+          "url": "https://css-tricks.com/scroll-driven-animations-no-js",
+          "domain": "css-tricks.com",
+          "title": "انیمیشن‌های scroll-driven بدون جاوااسکریپت",
+          "description": "نگاهی به قابلیت‌های تازه CSS برای انیمیشن وابسته به اسکرول.",
+          "categories": ["programming", "tools"]
+        }
+      ]
+    }
+  ]
+}
