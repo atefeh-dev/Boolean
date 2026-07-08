@@ -1,19 +1,39 @@
 :root {
-        --paper: #fbf6ed;
-        --surface: #fffdf8;
-        --surface-sunken: #f2eadb;
-        --ink: #211d17;
-        --ink-soft: #5a5146;
-        --ink-faint: #958878;
-        --line: #e8ddca;
+        --paper: #f3f4ef;
+        --surface: #ffffff;
+        --surface-sunken: #f0f1ea;
+        --ink: #1c1f1c;
+        --ink-soft: #4f544c;
+        --ink-faint: #868c82;
+        --line: #dcdfd5;
         --forest: #24483d;
         --forest-deep: #173027;
-        --clay: #b85d3e;
-        --clay-soft: #f3dfd1;
-        --gold: #d3a240;
-        --hero-paper: #fff8ec;
+        --clay: #9c5a3a;
+        --clay-soft: #e9d8c8;
+        --gold: #b08d46;
+        --hero-paper: #eff1e7;
         --font: "Vazirmatn", "Tahoma", "Arial", sans-serif;
         --font-meta: "Newsreader", Georgia, serif;
+
+        /* ── Motion system ──
+           One shared easing curve + a small duration scale, used everywhere
+           instead of one-off transition timings, so movement across the
+           product feels like a single hand designed it. */
+        --ease: cubic-bezier(0.4, 0, 0.2, 1);
+        --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+        --dur-fast: 0.15s;
+        --dur-base: 0.2s;
+        --dur-slow: 0.35s;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+          scroll-behavior: auto !important;
+        }
       }
       *,
       *::before,

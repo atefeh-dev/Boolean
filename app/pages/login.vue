@@ -49,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-definePageMeta({ title: "بولتن — ورود" })
+definePageMeta({ layout: "auth", title: "بولتن — ورود" })
 
 const route = useRoute()
 const router = useRouter()

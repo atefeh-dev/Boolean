@@ -21,7 +21,7 @@
               cx="300"
               cy="90"
               r="95"
-              fill="#E8DDCA"
+              fill="#DCDFD5"
               opacity="0.55"
               filter="url(#soft-blur)"
             />
@@ -29,7 +29,7 @@
               cx="115"
               cy="265"
               r="115"
-              fill="#D3A240"
+              fill="#B08D46"
               opacity="0.24"
               filter="url(#soft-blur)"
             />
@@ -56,7 +56,7 @@
                 width="48"
                 height="34"
                 rx="8"
-                fill="#FFFDF8"
+                fill="#FFFFFF"
               />
               <rect
                 x="50"
@@ -64,7 +64,7 @@
                 width="28"
                 height="5"
                 rx="2.5"
-                fill="#958878"
+                fill="#868c82"
               />
               <rect
                 x="50"
@@ -72,7 +72,7 @@
                 width="20"
                 height="5"
                 rx="2.5"
-                fill="#D8CBB7"
+                fill="#CFD4C2"
               />
             </g>
 
@@ -82,10 +82,10 @@
                 width="96"
                 height="40"
                 rx="11"
-                fill="#FFFDF8"
-                stroke="#E0D2BC"
+                fill="#FFFFFF"
+                stroke="#D7DBCD"
               />
-              <circle cx="22" cy="20" r="9" fill="#D3A240" />
+              <circle cx="22" cy="20" r="9" fill="#B08D46" />
               <rect x="38" y="13" width="44" height="6" rx="3" fill="#24483D" />
               <rect
                 x="38"
@@ -93,17 +93,17 @@
                 width="30"
                 height="5"
                 rx="2.5"
-                fill="#958878"
+                fill="#868c82"
               />
             </g>
 
             <!-- paper plane (arriving / top-right) -->
             <g transform="translate(296,40) rotate(8)">
-              <path d="M2 30 L96 2 L60 92 L46 58 Z" fill="#FFFDF8" />
-              <path d="M46 58 L96 2 L60 92 Z" fill="#D8CBB7" />
+              <path d="M2 30 L96 2 L60 92 L46 58 Z" fill="#FFFFFF" />
+              <path d="M46 58 L96 2 L60 92 Z" fill="#CFD4C2" />
               <path
                 d="M46 58 L96 2"
-                stroke="#958878"
+                stroke="#868c82"
                 stroke-width="2"
                 stroke-linecap="round"
               />
@@ -112,9 +112,9 @@
             <!-- sparkle accents -->
             <path
               d="M150 70 l4 10 l10 4 l-10 4 l-4 10 l-4 -10 l-10 -4 l10 -4 Z"
-              fill="#B85D3E"
+              fill="#9C5A3A"
               opacity="0.85"
             />
-            <circle cx="250" cy="250" r="5" fill="#D3A240" />
+            <circle cx="250" cy="250" r="5" fill="#B08D46" />
           </svg>
 </template>

@@ -15,7 +15,7 @@
             cx="300"
             cy="90"
             r="95"
-            fill="#E8DDCA"
+            fill="#DCDFD5"
             opacity="0.35"
             filter="url(#soft-blur)"
           />
@@ -23,7 +23,7 @@
             cx="115"
             cy="280"
             r="115"
-            fill="#D3A240"
+            fill="#B08D46"
             opacity="0.26"
             filter="url(#soft-blur)"
           />
@@ -42,35 +42,35 @@
               d="M0 22 a16 16 0 0 1 16 -16 H58 l14 16 H170 a16 16 0 0 1 16 16 V150 a16 16 0 0 1 -16 16 H16 a16 16 0 0 1 -16 -16 Z"
               fill="#31584B"
             />
-            <rect x="22" y="44" width="60" height="8" rx="4" fill="#F3DFD1" />
+            <rect x="22" y="44" width="60" height="8" rx="4" fill="#E9D8C8" />
           </g>
 
           <!-- front folder (open, with tags) -->
           <g transform="translate(58,150) rotate(6)">
             <path
               d="M0 24 a16 16 0 0 1 16 -16 H62 l14 16 H188 a16 16 0 0 1 16 16 V150 a16 16 0 0 1 -16 16 H16 a16 16 0 0 1 -16 -16 Z"
-              fill="#FFFDF8"
+              fill="#FFFFFF"
             />
             <!-- topic tag chips -->
             <g transform="translate(22,40)">
-              <rect width="74" height="22" rx="11" fill="#B85D3E" />
-              <circle cx="16" cy="11" r="5" fill="#FFFDF8" />
-              <rect x="28" y="8" width="34" height="6" rx="3" fill="#FFFDF8" />
+              <rect width="74" height="22" rx="11" fill="#9C5A3A" />
+              <circle cx="16" cy="11" r="5" fill="#FFFFFF" />
+              <rect x="28" y="8" width="34" height="6" rx="3" fill="#FFFFFF" />
             </g>
             <g transform="translate(106,40)">
               <rect width="64" height="22" rx="11" fill="#24483D" />
-              <circle cx="15" cy="11" r="5" fill="#D3A240" />
-              <rect x="26" y="8" width="28" height="6" rx="3" fill="#F3DFD1" />
+              <circle cx="15" cy="11" r="5" fill="#B08D46" />
+              <rect x="26" y="8" width="28" height="6" rx="3" fill="#E9D8C8" />
             </g>
             <g transform="translate(22,76)">
-              <rect width="58" height="22" rx="11" fill="#F2EADB" />
+              <rect width="58" height="22" rx="11" fill="#F0F1EA" />
               <circle cx="15" cy="11" r="5" fill="#31584B" />
-              <rect x="26" y="8" width="24" height="6" rx="3" fill="#958878" />
+              <rect x="26" y="8" width="24" height="6" rx="3" fill="#868c82" />
             </g>
             <g transform="translate(90,76)">
-              <rect width="80" height="22" rx="11" fill="#F2EADB" />
-              <circle cx="15" cy="11" r="5" fill="#B85D3E" />
-              <rect x="26" y="8" width="44" height="6" rx="3" fill="#958878" />
+              <rect width="80" height="22" rx="11" fill="#F0F1EA" />
+              <circle cx="15" cy="11" r="5" fill="#9C5A3A" />
+              <rect x="26" y="8" width="44" height="6" rx="3" fill="#868c82" />
             </g>
           </g>
         </svg>

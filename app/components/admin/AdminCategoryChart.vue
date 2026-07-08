@@ -50,7 +50,7 @@ const series  = computed(() => {
   return s;
 });
 
-const PALETTE = ["#24483d","#b85d3e","#d3a240","#3a7a63","#c47850","#6ba88f","#d4956e","#8aaa97"];
+const PALETTE = ["#24483d","#9c5a3a","#b08d46","#3a7a63","#b5714a","#6ba88f","#c68a5e","#8aaa97"];
 
 const options = computed(() => {
   const labels = [...visible.value.map(c => c.label), ...(rest.value > 0 ? ["سایر"] : [])];
@@ -81,7 +81,7 @@ const options = computed(() => {
               label: "کل",
               fontFamily: "Vazirmatn",
               fontSize: "12px",
-              color: "#958878",
+              color: "#868c82",
               fontWeight: 600,
               formatter: () => toP(total.value),
             },
@@ -89,7 +89,7 @@ const options = computed(() => {
               fontFamily: "Vazirmatn",
               fontWeight: 800,
               fontSize: "20px",
-              color: "#211d17",
+              color: "#1c1f1c",
               formatter: (v: string) => toP(parseInt(v)),
             },
           },
@@ -97,7 +97,7 @@ const options = computed(() => {
       },
     },
     dataLabels: { enabled: false },
-    stroke: { width: 2, colors: ["#fffdf8"] },
+    stroke: { width: 2, colors: ["#ffffff"] },
     tooltip: {
       theme: "light",
       style: { fontFamily: "Vazirmatn" },

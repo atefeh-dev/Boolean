@@ -62,7 +62,7 @@
 <script setup lang="ts">
 import IconsMail from "../components/icons/Mail.vue"
 
-definePageMeta({ title: "بولتن — فراموشی رمز عبور" })
+definePageMeta({ layout: "auth", title: "بولتن — فراموشی رمز عبور" })
 
 const email = ref("")
 const loading = ref(false)

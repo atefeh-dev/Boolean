@@ -12,12 +12,12 @@
         background:
           radial-gradient(
             ellipse 70% 55% at 92% 8%,
-            rgba(211, 162, 64, 0.22) 0%,
+            rgba(176, 141, 70, 0.22) 0%,
             transparent 55%
           ),
           radial-gradient(
             ellipse 55% 45% at 4% 92%,
-            rgba(184, 93, 62, 0.16) 0%,
+            rgba(156, 90, 58, 0.16) 0%,
             transparent 50%
           ),
           linear-gradient(
@@ -28,16 +28,16 @@
             #2d5c4e 78%,
             #1a3d34 100%
           );
-        border: 1px solid rgba(255, 253, 248, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 32px;
         padding: 44px 40px;
-        color: #fff8ec;
+        color: #eff1e7;
         position: sticky;
         top: 24px;
         overflow: hidden;
         box-shadow:
           0 28px 72px rgba(15, 34, 28, 0.38),
-          inset 0 1px 0 rgba(255, 253, 248, 0.08);
+          inset 0 1px 0 rgba(255, 255, 255, 0.08);
       }
       .submit-aside::before {
         content: "";
@@ -47,12 +47,12 @@
         background:
           radial-gradient(
             circle at 78% 22%,
-            rgba(255, 253, 248, 0.07) 0%,
+            rgba(255, 255, 255, 0.07) 0%,
             transparent 32%
           ),
           linear-gradient(
             180deg,
-            rgba(255, 253, 248, 0.04) 0%,
+            rgba(255, 255, 255, 0.04) 0%,
             transparent 40%
           );
       }
@@ -69,14 +69,14 @@
         font-size: 1.75rem;
         font-weight: 800;
         line-height: 1.35;
-        color: #fff8ec;
+        color: #eff1e7;
         margin-bottom: 14px;
         position: relative;
         z-index: 1;
       }
       .submit-aside__desc {
         font-size: 0.9375rem;
-        color: rgba(246, 241, 231, 0.78);
+        color: rgba(239, 241, 231, 0.78);
         margin-bottom: 8px;
         position: relative;
         z-index: 1;
@@ -94,7 +94,7 @@
         background: var(--surface);
         border-radius: 24px;
         padding: 40px 44px;
-        box-shadow: 0 8px 24px rgba(33, 29, 23, 0.06);
+        box-shadow: 0 8px 24px rgba(28, 31, 28, 0.06);
       }
       .submit-card__title {
         font-size: 1.5rem;
@@ -133,9 +133,7 @@
         background: var(--paper);
         color: var(--ink);
         outline: none;
-        transition:
-          border-color 0.15s,
-          background 0.15s;
+        transition: border-color 0.15s var(--ease), background 0.15s var(--ease);
         direction: rtl;
       }
       input[type="url"] {
@@ -166,7 +164,7 @@
         background: none;
         color: var(--ink-faint);
         cursor: pointer;
-        transition: color 0.15s, background 0.15s;
+        transition: color 0.15s var(--ease), background 0.15s var(--ease);
       }
       .field-wrap__toggle:hover {
         color: var(--forest);
@@ -218,14 +216,14 @@
         font-size: 0.8125rem;
         font-weight: 600;
         cursor: pointer;
-        transition: all 0.15s;
+        transition: all 0.15s var(--ease);
         color: var(--ink-soft);
         background: var(--paper);
       }
       .cat-opt:checked + .cat-lbl {
         background: var(--clay-soft);
         border-color: var(--clay);
-        color: #8a3f23;
+        color: #7a3f22;
       }
       .cat-lbl:hover {
         border-color: var(--clay);
@@ -245,10 +243,13 @@
         font-size: 0.9375rem;
         font-weight: 700;
         cursor: pointer;
-        transition: background 0.15s;
+        transition: background 0.15s var(--ease), transform 0.1s var(--ease);
       }
       .btn-submit:hover {
         background: var(--forest-deep);
+      }
+      .btn-submit:active {
+        transform: scale(0.97);
       }
       .success-msg { display: none; }
 

@@ -3,12 +3,12 @@
         background:
           radial-gradient(
             ellipse 70% 55% at 92% 8%,
-            rgba(211, 162, 64, 0.22) 0%,
+            rgba(176, 141, 70, 0.22) 0%,
             transparent 55%
           ),
           radial-gradient(
             ellipse 55% 45% at 4% 92%,
-            rgba(184, 93, 62, 0.16) 0%,
+            rgba(156, 90, 58, 0.16) 0%,
             transparent 50%
           ),
           linear-gradient(
@@ -19,7 +19,7 @@
             #2d5c4e 78%,
             #1a3d34 100%
           );
-        border: 1px solid rgba(255, 253, 248, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 32px;
         padding: 48px 56px;
         margin: 12px 0 48px;
@@ -31,7 +31,7 @@
         overflow: hidden;
         box-shadow:
           0 28px 72px rgba(15, 34, 28, 0.38),
-          inset 0 1px 0 rgba(255, 253, 248, 0.08);
+          inset 0 1px 0 rgba(255, 255, 255, 0.08);
       }
       .page-hero::before {
         content: "";
@@ -41,12 +41,12 @@
         background:
           radial-gradient(
             circle at 78% 22%,
-            rgba(255, 253, 248, 0.07) 0%,
+            rgba(255, 255, 255, 0.07) 0%,
             transparent 32%
           ),
           linear-gradient(
             180deg,
-            rgba(255, 253, 248, 0.04) 0%,
+            rgba(255, 255, 255, 0.04) 0%,
             transparent 40%
           );
       }
@@ -65,12 +65,12 @@
         font-size: clamp(2rem, 3.5vw, 2.75rem);
         font-weight: 800;
         line-height: 1.3;
-        color: #fff8ec;
+        color: #eff1e7;
         margin-bottom: 14px;
       }
       .page-hero__desc {
         font-size: 1.0625rem;
-        color: rgba(246, 241, 231, 0.78);
+        color: rgba(239, 241, 231, 0.78);
         max-width: 440px;
       }
       .page-hero__art {
@@ -109,13 +109,11 @@
         background: var(--surface);
         direction: rtl;
         color: var(--ink);
-        transition:
-          border-color 0.15s,
-          box-shadow 0.15s;
+        transition: border-color 0.15s var(--ease), box-shadow 0.15s var(--ease);
       }
       .search-input:focus {
         border-color: var(--clay);
-        box-shadow: 0 0 0 4px rgba(193, 98, 60, 0.12);
+        box-shadow: 0 0 0 4px rgba(156, 90, 58, 0.12);
       }
 
       /* ── Pill cloud filter bar — wraps instead of scrolling, since the
@@ -138,11 +136,7 @@
         font-weight: 600;
         white-space: nowrap;
         cursor: pointer;
-        transition:
-          background 0.15s,
-          color 0.15s,
-          border-color 0.15s,
-          transform 0.1s;
+        transition: background 0.15s var(--ease), color 0.15s var(--ease), border-color 0.15s var(--ease), transform 0.1s var(--ease);
       }
       .chip:hover {
         border-color: var(--clay);
@@ -177,7 +171,7 @@
         border-radius: 24px;
         padding: 28px 32px;
         margin-bottom: 16px;
-        box-shadow: 0 8px 24px rgba(33, 29, 23, 0.06);
+        box-shadow: 0 8px 24px rgba(28, 31, 28, 0.06);
         display: grid;
         grid-template-columns: 120px 1fr;
         gap: 24px;
@@ -210,7 +204,7 @@
         font-weight: 700;
         color: var(--ink);
         line-height: 1.5;
-        transition: color 0.15s;
+        transition: color 0.15s var(--ease);
       }
       .preview-link:hover {
         color: var(--clay);

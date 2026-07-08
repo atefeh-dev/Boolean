@@ -9,14 +9,14 @@
         background: var(--surface);
         border: 1px solid var(--line);
         border-radius: 20px;
-        box-shadow: 0 1px 2px rgba(33, 29, 23, 0.04), 0 14px 28px -20px rgba(33, 29, 23, 0.22);
+        box-shadow: 0 1px 2px rgba(28, 31, 28, 0.04), 0 14px 28px -20px rgba(28, 31, 28, 0.22);
       }
       .nav__brand {
         display: flex;
         align-items: center;
         gap: 10px;
         border-radius: 10px;
-        transition: opacity 0.15s;
+        transition: opacity 0.15s var(--ease);
         flex-shrink: 0;
       }
       .nav__brand-word {
@@ -62,7 +62,7 @@
         font-size: 0.875rem;
         font-weight: 600;
         color: var(--ink-soft);
-        transition: color 0.15s, background 0.15s;
+        transition: color 0.15s var(--ease), background 0.15s var(--ease);
       }
       .nav__links a svg {
         width: 16px;
@@ -71,7 +71,7 @@
       }
       .nav__links a:hover {
         color: var(--ink);
-        background: rgba(33, 29, 23, 0.05);
+        background: rgba(28, 31, 28, 0.05);
       }
       .nav__links a:focus-visible {
         outline: 2px solid var(--forest);
@@ -102,7 +102,7 @@
         border-radius: 999px;
         font-size: 0.875rem;
         font-weight: 700;
-        transition: background 0.15s, box-shadow 0.15s;
+        transition: background 0.15s var(--ease), box-shadow 0.15s var(--ease), transform 0.1s var(--ease);
       }
       .nav__cta svg {
         width: 15px;
@@ -111,6 +111,9 @@
       }
       .nav__cta:hover {
         background: var(--forest-deep);
+      }
+      .nav__cta:active {
+        transform: scale(0.97);
       }
       .nav__cta:focus-visible {
         outline: 2px solid var(--forest-deep);
@@ -133,7 +136,7 @@
         border: none;
         cursor: pointer;
         position: relative;
-        transition: color 0.15s, background 0.15s;
+        transition: color 0.15s var(--ease), background 0.15s var(--ease);
       }
       .nav__bell svg {
         width: 19px;
@@ -141,7 +144,7 @@
       }
       .nav__bell:hover {
         color: var(--ink);
-        background: rgba(33, 29, 23, 0.05);
+        background: rgba(28, 31, 28, 0.05);
       }
       .nav__bell:focus-visible {
         outline: 2px solid var(--forest);
@@ -173,7 +176,7 @@
         padding: 10px 20px;
         border-radius: 999px;
         cursor: pointer;
-        transition: color 0.15s, background 0.15s;
+        transition: color 0.15s var(--ease), background 0.15s var(--ease);
       }
       .nav__auth-link:hover {
         color: var(--forest);
@@ -223,7 +226,7 @@
         border: none;
         border-radius: 999px;
         cursor: pointer;
-        transition: background 0.15s;
+        transition: background 0.15s var(--ease);
       }
       .user-menu__trigger:hover {
         background: var(--line);
@@ -267,7 +270,7 @@
         width: 14px;
         height: 14px;
         color: var(--ink-faint);
-        transition: transform 0.15s;
+        transition: transform 0.15s var(--ease);
         flex-shrink: 0;
       }
       .user-menu__chevron.is-open {
@@ -282,7 +285,7 @@
         background: var(--surface);
         border: 1px solid var(--line);
         border-radius: 14px;
-        box-shadow: 0 1px 2px rgba(33, 29, 23, 0.04), 0 16px 32px -14px rgba(33, 29, 23, 0.28);
+        box-shadow: 0 1px 2px rgba(28, 31, 28, 0.04), 0 16px 32px -14px rgba(28, 31, 28, 0.28);
         z-index: 50;
       }
       .user-menu__item {
@@ -300,7 +303,7 @@
         border: none;
         cursor: pointer;
         text-align: right;
-        transition: background 0.15s, color 0.15s;
+        transition: background 0.15s var(--ease), color 0.15s var(--ease);
       }
       .user-menu__item svg {
         width: 15px;

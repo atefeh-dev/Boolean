@@ -57,7 +57,7 @@ const series = computed(() => [{
 // Current week bar is slightly darker for emphasis
 const colors = computed(() =>
   props.subscriberWeeklyTrend.map((_, i) =>
-    i === props.subscriberWeeklyTrend.length - 1 ? "#b85d3e" : "#e8c4b0"
+    i === props.subscriberWeeklyTrend.length - 1 ? "#9c5a3a" : "#e4cdba"
   )
 );
 
@@ -68,7 +68,7 @@ const options = computed(() => ({
     animations: { enabled: true, easing: "easeinout", speed: 600 },
     background: "transparent",
   },
-  colors: ["#b85d3e"],
+  colors: ["#9c5a3a"],
   fill: { colors: colors.value, type: "solid" },
   plotOptions: {
     bar: {
@@ -81,7 +81,7 @@ const options = computed(() => ({
   dataLabels: { enabled: false },
   legend: { show: false },
   grid: {
-    borderColor: "#e8ddca",
+    borderColor: "#dcdfd5",
     strokeDashArray: 4,
     xaxis: { lines: { show: false } },
     yaxis: { lines: { show: true } },
@@ -90,7 +90,7 @@ const options = computed(() => ({
   xaxis: {
     categories: props.subscriberWeeklyTrend.map(w => w.label),
     labels: {
-      style: { colors: "#958878", fontFamily: "Vazirmatn", fontSize: "11px" },
+      style: { colors: "#868c82", fontFamily: "Vazirmatn", fontSize: "11px" },
     },
     axisBorder: { show: false },
     axisTicks:  { show: false },
@@ -99,7 +99,7 @@ const options = computed(() => ({
     min: 0,
     tickAmount: 4,
     labels: {
-      style: { colors: "#958878", fontFamily: "Vazirmatn", fontSize: "11px" },
+      style: { colors: "#868c82", fontFamily: "Vazirmatn", fontSize: "11px" },
       formatter: (v: number) => toP(Math.round(v)),
     },
   },

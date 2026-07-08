@@ -77,12 +77,12 @@ const options = computed(() => ({
   markers: {
     size: 4,
     colors: ["#24483d"],
-    strokeColors: "#fffdf8",
+    strokeColors: "#ffffff",
     strokeWidth: 2,
     hover: { size: 6 },
   },
   grid: {
-    borderColor: "#e8ddca",
+    borderColor: "#dcdfd5",
     strokeDashArray: 4,
     xaxis: { lines: { show: false } },
     yaxis: { lines: { show: true } },
@@ -91,7 +91,7 @@ const options = computed(() => ({
   xaxis: {
     categories: props.weeklyTrend.map(w => w.label),
     labels: {
-      style: { colors: "#958878", fontFamily: "Vazirmatn", fontSize: "11px" },
+      style: { colors: "#868c82", fontFamily: "Vazirmatn", fontSize: "11px" },
     },
     axisBorder: { show: false },
     axisTicks: { show: false },
@@ -100,7 +100,7 @@ const options = computed(() => ({
     min: 0,
     tickAmount: 4,
     labels: {
-      style: { colors: "#958878", fontFamily: "Vazirmatn", fontSize: "11px" },
+      style: { colors: "#868c82", fontFamily: "Vazirmatn", fontSize: "11px" },
       formatter: (v: number) => toP(Math.round(v)),
     },
   },

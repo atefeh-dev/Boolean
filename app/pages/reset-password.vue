@@ -74,7 +74,7 @@
 <script setup lang="ts">
 import IconsCheckCircle from "../components/icons/CheckCircle.vue"
 
-definePageMeta({ title: "بولتن — تغییر رمز عبور" })
+definePageMeta({ layout: "auth", title: "بولتن — تغییر رمز عبور" })
 
 const route = useRoute()
 const token = computed(() => route.query.token as string | undefined)

@@ -55,7 +55,7 @@
 </template>
 
 <script setup lang="ts">
-definePageMeta({ title: "بولتن — ثبت‌نام" })
+definePageMeta({ layout: "auth", title: "بولتن — ثبت‌نام" })
 
 const route = useRoute()
 const router = useRouter()

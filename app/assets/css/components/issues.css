@@ -21,7 +21,7 @@
         border-radius: 24px;
         padding: 40px 44px;
         margin-bottom: 32px;
-        box-shadow: 0 8px 24px rgba(33, 29, 23, 0.06);
+        box-shadow: 0 8px 24px rgba(28, 31, 28, 0.06);
       }
       .day__meta {
         display: flex;
@@ -109,7 +109,7 @@
         padding: 4px 12px;
         border-radius: 999px;
         background: var(--clay-soft);
-        color: #8a3f23;
+        color: #7a3f22;
       }
 
       /* ── Bottom CTA ── */
@@ -127,7 +127,7 @@
         margin-bottom: 12px;
       }
       .cta p {
-        color: rgba(246, 241, 231, 0.75);
+        color: rgba(239, 241, 231, 0.75);
         margin-bottom: 28px;
       }
       .cta__form {
