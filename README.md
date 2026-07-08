@@ -63,3 +63,4 @@ sidebar-fa-nuxt/
 
 Original static prototype: `../sidebar-fa-redesign-refined/`
 # Boolean
+# Boolean
