@@ -30,10 +30,7 @@
 
     <!-- Left: notifications + user menu (RTL = visually left) -->
     <div class="nav__right">
-      <button type="button" class="nav__bell" aria-haspopup="true" title="اعلان‌ها" @click="toggleBell">
-        <IconsBell />
-        <span class="nav__bell-dot" aria-hidden="true" />
-      </button>
+      <LayoutNotificationsBell />
 
       <LayoutUserMenu :name="user?.name ?? ''" role-label="مدیر سیستم" @logout="handleLogout" />
     </div>
@@ -44,7 +41,7 @@
 const route = useRoute()
 const router = useRouter()
 const { user, logout } = useAuth()
-const { showToast } = useToast()
+const { reset: resetNotifications } = useNotifications()
 
 function exact(path: string) {
   return route.path === path
@@ -53,12 +50,9 @@ function isActive(path: string) {
   return route.path.startsWith(path)
 }
 
-function toggleBell() {
-  showToast('اعلانی وجود ندارد')
-}
-
 async function handleLogout() {
   await logout()
+  resetNotifications()
   router.push('/')
 }
 </script>

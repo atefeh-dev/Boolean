@@ -19,10 +19,7 @@
     </div>
 
     <div class="nav__right">
-      <button v-if="isLoggedIn" type="button" class="nav__bell" aria-haspopup="true" title="اعلان‌ها" @click="toggleBell">
-        <IconsBell />
-        <span class="nav__bell-dot" aria-hidden="true" />
-      </button>
+      <LayoutNotificationsBell v-if="isLoggedIn" />
 
       <NuxtLink
         to="/submit"
@@ -58,18 +55,15 @@
 const route = useRoute()
 const router = useRouter()
 const { user, isLoggedIn, logout } = useAuth()
-const { showToast } = useToast()
+const { reset: resetNotifications } = useNotifications()
 
 function isActive(path: string) {
   return route.path === path || route.path.startsWith(`${path}/`)
 }
 
-function toggleBell() {
-  showToast('اعلانی وجود ندارد')
-}
-
 async function handleLogout() {
   await logout()
+  resetNotifications()
   router.push('/')
 }
 </script>

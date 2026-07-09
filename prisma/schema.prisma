@@ -58,10 +58,33 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  links Link[]
+  // Watermark for the notifications bell: anything newer than this is
+  // unread. Updated whenever the user opens the notifications panel.
+  lastNotificationsReadAt DateTime?
+
+  links       Link[]
   resetTokens PasswordResetToken[]
+  dismissedNotifications NotificationDismissal[]
 
   @@map("users")
+}
+
+// Notifications are derived at read-time from Link rows (see
+// /api/notifications) rather than stored — there's no Notification table.
+// Dismissing one is therefore just "remember this derived id is hidden for
+// this user", so it stays gone across refreshes/devices without needing to
+// touch the underlying Link.
+model NotificationDismissal {
+  id             String   @id @default(uuid())
+  userId         String
+  notificationId String // e.g. "pending:<linkId>" — matches NotificationItem.id
+  dismissedAt    DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, notificationId])
+  @@index([userId])
+  @@map("notification_dismissals")
 }
 
 model Category {

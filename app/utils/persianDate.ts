@@ -51,3 +51,26 @@ export function persianMonthYearKey(date: Date) {
   const month = parts.find((p) => p.type === "month")?.value ?? "0";
   return `${year}-${month}`;
 }
+
+/** "۳ ساعت پیش" / "دیروز" style relative time, using Persian digits + grammar. */
+export function formatRelativeTime(date: Date) {
+  const rtf = new Intl.RelativeTimeFormat("fa-IR", { numeric: "auto" });
+  const diffSec = Math.round((date.getTime() - Date.now()) / 1000);
+  const absSec = Math.abs(diffSec);
+
+  const units: [Intl.RelativeTimeFormatUnit, number][] = [
+    ["year", 31536000],
+    ["month", 2592000],
+    ["day", 86400],
+    ["hour", 3600],
+    ["minute", 60],
+    ["second", 1],
+  ];
+
+  for (const [unit, secondsInUnit] of units) {
+    if (absSec >= secondsInUnit || unit === "second") {
+      return rtf.format(Math.round(diffSec / secondsInUnit), unit);
+    }
+  }
+  return rtf.format(0, "second");
+}
