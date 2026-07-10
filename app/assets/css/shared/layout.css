@@ -125,6 +125,27 @@
         pointer-events: none;
       }
 
+      /* ── Bell ring, for newly-arrived notifications ── */
+      .notif__bell-icon--ring {
+        transform-origin: 50% 15%;
+        animation: bellRing 1.4s var(--ease);
+      }
+      @keyframes bellRing {
+        0%, 62%, 100% { transform: rotate(0deg); }
+        6% { transform: rotate(15deg); }
+        14% { transform: rotate(-12deg); }
+        22% { transform: rotate(9deg); }
+        30% { transform: rotate(-7deg); }
+        38% { transform: rotate(5deg); }
+        46% { transform: rotate(-3deg); }
+        54% { transform: rotate(1deg); }
+        /* brief rest, then a lighter second pass — reinforces without looping */
+        72% { transform: rotate(8deg); }
+        80% { transform: rotate(-5deg); }
+        88% { transform: rotate(2deg); }
+        94% { transform: rotate(-1deg); }
+      }
+
       .notif__panel {
         position: absolute;
         top: calc(100% + 10px);

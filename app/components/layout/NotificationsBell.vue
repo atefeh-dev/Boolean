@@ -9,7 +9,7 @@
       :title="unreadCount > 0 ? `اعلان‌ها (${badgeLabel} مورد جدید)` : 'اعلان‌ها'"
       @click="toggle"
     >
-      <IconsBell />
+      <IconsBell class="notif__bell-icon" :class="{ 'notif__bell-icon--ring': ringing }" />
       <span v-if="unreadCount > 0" class="notif__badge" aria-hidden="true">{{ badgeLabel }}</span>
     </UiAppButton>
 
@@ -87,7 +87,7 @@ import { formatRelativeTime } from '../../utils/persianDate'
 import { toPersian } from '../../utils/persian'
 import type { NotificationItem } from '../../composables/useNotifications'
 
-const { notifications, loading, error, unreadCount, fetchNotifications, markAllRead, dismissNotification } =
+const { notifications, loading, error, unreadCount, ringing, fetchNotifications, markAllRead, dismissNotification } =
   useNotifications()
 
 const open = ref(false)

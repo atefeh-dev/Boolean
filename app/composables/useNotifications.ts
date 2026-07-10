@@ -24,6 +24,32 @@ export function useNotifications() {
   const error = useState<boolean>('notifications_error', () => false)
   const lastFetchedFor = useState<string | null>('notifications_fetched_for', () => null)
 
+  // ── Bell ring, for newly-arrived notifications ──────────────────────────
+  // Shared (not per-component) state: the public site and the admin panel
+  // use separate layouts, each mounting their own NotificationsBell, so a
+  // ref local to that component would reset every time the user crosses
+  // between them and miss the exact fetch that revealed the new item.
+  // `lastSeenUnreadCount` starts at 0 (the same default as unreadCount
+  // itself), so a fresh page load that immediately finds unread items
+  // rings too — not just increases spotted mid-session.
+  const ringing = useState<boolean>('notifications_ringing', () => false)
+  const lastSeenUnreadCount = useState<number>('notifications_last_seen_count', () => 0)
+  let ringTimeout: ReturnType<typeof setTimeout> | undefined
+
+  function maybeRing(newCount: number) {
+    const prev = lastSeenUnreadCount.value
+    lastSeenUnreadCount.value = newCount
+    if (newCount <= prev) return
+    ringing.value = false
+    setTimeout(() => {
+      ringing.value = true
+      if (ringTimeout) clearTimeout(ringTimeout)
+      ringTimeout = setTimeout(() => {
+        ringing.value = false
+      }, 1400)
+    }, 0)
+  }
+
   async function fetchNotifications({ force = false } = {}) {
     if (!isLoggedIn.value || !user.value) return
     if (!force && lastFetchedFor.value === user.value.id) return
@@ -35,6 +61,7 @@ export function useNotifications() {
         '/api/notifications',
       )
       notifications.value = res.notifications
+      maybeRing(res.unreadCount)
       unreadCount.value = res.unreadCount
       lastFetchedFor.value = user.value.id
     } catch (err) {
@@ -97,6 +124,8 @@ export function useNotifications() {
     notifications.value = []
     unreadCount.value = 0
     lastFetchedFor.value = null
+    lastSeenUnreadCount.value = 0
+    ringing.value = false
   }
 
   return {
@@ -104,6 +133,7 @@ export function useNotifications() {
     unreadCount,
     loading,
     error,
+    ringing,
     fetchNotifications,
     markAllRead,
     dismissNotification,
