@@ -41,22 +41,23 @@
         <span class="admin-sub-table__index">{{ toPersian(skip + idx + 1) }}</span>
         <span class="admin-sub-table__email" dir="ltr">{{ sub.email }}</span>
         <span class="admin-sub-table__date">{{ formatDate(sub.createdAt) }}</span>
-        <button
-          class="admin-sub-table__delete"
+        <UiAppButton
+          variant="icon"
+          shape="rounded"
           :disabled="deletingId === sub.id"
           :aria-label="`حذف ${sub.email}`"
           @click="confirmDelete(sub)"
         >
           <IconsTrash />
-        </button>
+        </UiAppButton>
       </div>
     </div>
 
     <!-- Pagination -->
     <div v-if="total > pageSize" class="admin-pagination">
-      <button :disabled="page === 1" @click="goToPage(page - 1)">‹ قبلی</button>
+      <UiAppButton variant="line" size="sm" :disabled="page === 1" @click="goToPage(page - 1)">‹ قبلی</UiAppButton>
       <span>صفحه {{ toPersian(page) }} از {{ toPersian(pageCount) }}</span>
-      <button :disabled="page === pageCount" @click="goToPage(page + 1)">بعدی ›</button>
+      <UiAppButton variant="line" size="sm" :disabled="page === pageCount" @click="goToPage(page + 1)">بعدی ›</UiAppButton>
     </div>
 
     <!-- Delete confirm modal -->
@@ -67,10 +68,10 @@
           <p class="admin-modal__desc" dir="ltr">{{ confirmSub.email }}</p>
           <p class="admin-modal__warn">این عملیات قابل بازگشت نیست.</p>
           <div class="admin-modal__actions">
-            <button class="admin-modal__cancel" @click="confirmSub = null">انصراف</button>
-            <button class="admin-modal__confirm" :disabled="!!deletingId" @click="doDelete">
+            <UiAppButton variant="outline" size="sm" @click="confirmSub = null">انصراف</UiAppButton>
+            <UiAppButton variant="clay" size="sm" :disabled="!!deletingId" @click="doDelete">
               {{ deletingId ? "در حال حذف..." : "حذف مشترک" }}
-            </button>
+            </UiAppButton>
           </div>
         </div>
       </div>

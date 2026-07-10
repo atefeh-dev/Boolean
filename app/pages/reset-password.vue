@@ -17,9 +17,9 @@
           <p class="auth-card__sub">
             رمز عبور شما با موفقیت تغییر یافت. می‌توانید وارد شوید.
           </p>
-          <NuxtLink to="/login" class="auth-btn" style="margin-top:32px">
+          <UiAppButton to="/login" shape="rounded" size="lg" block class="auth-cta">
             ورود به حساب کاربری
-          </NuxtLink>
+          </UiAppButton>
         </template>
 
         <!-- Invalid token -->
@@ -28,9 +28,9 @@
           <p class="auth-card__sub">
             این لینک بازیابی معتبر نیست یا منقضی شده است.
           </p>
-          <NuxtLink to="/forgot-password" class="auth-btn" style="margin-top:32px">
+          <UiAppButton to="/forgot-password" shape="rounded" size="lg" block class="auth-cta">
             درخواست لینک جدید
-          </NuxtLink>
+          </UiAppButton>
         </template>
 
         <!-- Form -->
@@ -60,9 +60,9 @@
               autocomplete="new-password"
               placeholder="همان رمز عبور بالا"
             />
-            <button type="submit" class="auth-btn" :disabled="loading">
+            <UiAppButton type="submit" shape="rounded" size="lg" block class="auth-cta" :disabled="loading">
               {{ loading ? "در حال ذخیره..." : "ذخیره رمز عبور" }}
-            </button>
+            </UiAppButton>
           </form>
         </template>
 

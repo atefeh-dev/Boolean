@@ -1,7 +1,8 @@
 <template>
   <div ref="root" class="notif">
-    <button
-      type="button"
+    <UiAppButton
+      variant="icon-ghost"
+      size="lg"
       class="notif__trigger"
       :aria-expanded="open"
       aria-haspopup="true"
@@ -10,7 +11,7 @@
     >
       <IconsBell />
       <span v-if="unreadCount > 0" class="notif__badge" aria-hidden="true">{{ badgeLabel }}</span>
-    </button>
+    </UiAppButton>
 
     <Transition name="user-menu-fade">
       <div
@@ -27,9 +28,9 @@
           <span>اعلان‌ها</span>
           <span class="notif__panel-head-actions">
             <span v-if="unreadCount > 0" class="notif__unread-badge">{{ unreadCount }} جدید</span>
-            <button type="button" class="notif__close" aria-label="بستن" @click="open = false">
+            <UiAppButton variant="icon-ghost" size="sm" aria-label="بستن" @click="open = false">
               <IconsX />
-            </button>
+            </UiAppButton>
           </span>
         </div>
 
@@ -64,14 +65,15 @@
                 </span>
                 <span v-if="!item.read" class="notif__item-dot" aria-hidden="true" />
               </NuxtLink>
-              <button
-                type="button"
+              <UiAppButton
+                variant="icon"
+                size="sm"
                 class="notif__item-dismiss"
                 aria-label="حذف این اعلان"
                 @click.stop.prevent="dismissNotification(item.id)"
               >
                 <IconsX />
-              </button>
+              </UiAppButton>
             </div>
           </li>
         </TransitionGroup>

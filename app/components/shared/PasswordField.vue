@@ -12,8 +12,9 @@
         required
         @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
       />
-      <button
-        type="button"
+      <UiAppButton
+        variant="icon-ghost"
+        shape="rounded"
         class="field-wrap__toggle"
         :aria-label="visible ? 'پنهان کردن رمز عبور' : 'نمایش رمز عبور'"
         :aria-pressed="visible"
@@ -21,7 +22,7 @@
       >
         <IconsEyeOff v-if="visible" />
         <IconsEye v-else />
-      </button>
+      </UiAppButton>
     </div>
   </div>
 </template>

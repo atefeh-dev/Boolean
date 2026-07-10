@@ -9,9 +9,9 @@
   <CategoriesCategoryGrid v-if="view === 'grid'" :cards="categoryCards" @select="showCategory" />
 
   <div v-else>
-    <button type="button" class="back-btn" @click="showAll">
+    <UiAppButton type="button" variant="text" class="back-btn" @click="showAll">
       ← همه دسته‌بندی‌ها
-    </button>
+    </UiAppButton>
     <CategoriesCategoryDetail
       :sections="categorySections"
       :active-category="selectedCategory"

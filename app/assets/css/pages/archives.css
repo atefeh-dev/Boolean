@@ -124,35 +124,6 @@
         flex-wrap: wrap;
         gap: 10px;
       }
-      .chip {
-        flex: 0 0 auto;
-        padding: 9px 18px;
-        border: 1px solid var(--line);
-        border-radius: 999px;
-        background: var(--surface);
-        color: var(--ink-soft);
-        font-family: var(--font);
-        font-size: 0.875rem;
-        font-weight: 600;
-        white-space: nowrap;
-        cursor: pointer;
-        transition: background 0.15s var(--ease), color 0.15s var(--ease), border-color 0.15s var(--ease), transform 0.1s var(--ease);
-      }
-      .chip:hover {
-        border-color: var(--clay);
-        color: var(--clay);
-      }
-      .chip:active {
-        transform: scale(0.96);
-      }
-      .chip--active {
-        background: var(--forest);
-        border-color: var(--forest);
-        color: #fff;
-      }
-      .chip--active:hover {
-        color: #fff;
-      }
 
       /* ── Month group ── */
       .month-group {

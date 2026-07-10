@@ -153,30 +153,7 @@
         position: absolute;
         top: 50%;
         left: 6px;
-        transform: translateY(-50%);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 32px;
-        height: 32px;
-        border-radius: 8px;
-        border: none;
-        background: none;
-        color: var(--ink-faint);
-        cursor: pointer;
-        transition: color 0.15s var(--ease), background 0.15s var(--ease);
-      }
-      .field-wrap__toggle:hover {
-        color: var(--forest);
-        background: var(--surface-sunken);
-      }
-      .field-wrap__toggle:focus-visible {
-        outline: 2px solid var(--forest);
-        outline-offset: 2px;
-      }
-      .field-wrap__toggle svg {
-        width: 18px;
-        height: 18px;
+        margin-top: -16px;
       }
       textarea {
         min-height: 96px;
@@ -231,25 +208,7 @@
       }
 
       .btn-submit {
-        display: inline-flex;
-        align-items: center;
         margin-top: 12px;
-        padding: 14px 32px;
-        background: var(--forest);
-        color: #fff;
-        border: none;
-        border-radius: 999px;
-        font-family: var(--font);
-        font-size: 0.9375rem;
-        font-weight: 700;
-        cursor: pointer;
-        transition: background 0.15s var(--ease), transform 0.1s var(--ease);
-      }
-      .btn-submit:hover {
-        background: var(--forest-deep);
-      }
-      .btn-submit:active {
-        transform: scale(0.97);
       }
       .success-msg { display: none; }
 

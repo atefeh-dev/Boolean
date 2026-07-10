@@ -38,7 +38,7 @@
           <p class="nl-success__title">خبرنامه با موفقیت ارسال شد</p>
           <p class="nl-success__sub">{{ sendResult }}</p>
         </div>
-        <button class="nl-success__reset" @click="reset">ارسال شماره بعدی</button>
+        <UiAppButton variant="line" size="sm" class="nl-success__reset" @click="reset">ارسال شماره بعدی</UiAppButton>
       </div>
 
       <!-- ── Empty queue ──────────────────────────────────────────── -->
@@ -137,9 +137,10 @@
                 <span class="nl-preview-footer__to">
                   ارسال به {{ toPersian(preview.subscriberCount) }} مشترک
                 </span>
-                <button
-                  class="nl-send-btn"
-                  :class="canSend ? 'nl-send-btn--ready' : ''"
+                <UiAppButton
+                  :variant="canSend ? 'forest' : 'neutral'"
+                  shape="rounded"
+                  block
                   :disabled="!canSend || sending"
                   @click="sendIssue"
                 >
@@ -149,7 +150,7 @@
                       : selected.size
                         ? `ارسال ${toPersian(selected.size)} لینک`
                         : 'ارسال خبرنامه' }}
-                </button>
+                </UiAppButton>
                 <p v-if="!canSend && !sending" class="nl-send-hint">
                   {{ !selected.size
                       ? 'حداقل یک لینک انتخاب کنید'

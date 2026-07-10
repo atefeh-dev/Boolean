@@ -41,9 +41,9 @@
             placeholder="حداقل ۸ کاراکتر"
           />
 
-          <button type="submit" class="auth-btn" :disabled="loading">
+          <UiAppButton type="submit" shape="rounded" size="lg" block class="auth-cta" :disabled="loading">
             {{ loading ? "در حال ساخت حساب..." : "ساخت حساب کاربری" }}
-          </button>
+          </UiAppButton>
         </form>
 
         <p class="auth-card__foot">

@@ -18,9 +18,9 @@
             <strong dir="ltr" style="color: var(--ink)">{{ sentEmail }}</strong>
             ارسال شد. پوشه اسپم را هم بررسی کنید.
           </p>
-          <NuxtLink to="/login" class="auth-btn">
+          <UiAppButton to="/login" shape="rounded" size="lg" block class="auth-cta">
             بازگشت به ورود
-          </NuxtLink>
+          </UiAppButton>
         </template>
 
         <template v-else>
@@ -44,9 +44,9 @@
               :disabled="loading"
             />
 
-            <button type="submit" class="auth-btn" :disabled="loading">
+            <UiAppButton type="submit" shape="rounded" size="lg" block class="auth-cta" :disabled="loading">
               {{ loading ? "در حال ارسال..." : "ارسال لینک بازیابی" }}
-            </button>
+            </UiAppButton>
           </form>
 
           <p class="auth-card__foot">

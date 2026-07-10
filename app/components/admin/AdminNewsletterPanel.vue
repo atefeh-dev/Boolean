@@ -26,9 +26,9 @@
       </div>
     </div>
 
-    <NuxtLink v-if="readyCount >= 3" to="/admin/newsletter" class="dash-nl-send-btn">
+    <UiAppButton v-if="readyCount >= 3" to="/admin/newsletter" variant="forest" shape="rounded" block>
       <IconsSend /> ارسال خبرنامه بعدی
-    </NuxtLink>
+    </UiAppButton>
   </div>
 </template>
 

@@ -17,13 +17,10 @@
           :disabled="state !== 'idle'"
           required
         />
-        <button
+        <UiAppButton
           type="submit"
+          :variant="state === 'done' ? 'forest' : 'clay'"
           class="hero__submit-btn"
-          :class="{
-            'hero__submit-btn--loading': state === 'loading',
-            'hero__submit-btn--done': state === 'done',
-          }"
           :disabled="state !== 'idle'"
         >
           <span v-if="state === 'idle'" class="hero__btn-label">عضویت رایگان</span>
@@ -38,7 +35,7 @@
             </svg>
             ثبت شد!
           </span>
-        </button>
+        </UiAppButton>
       </form>
 
       <p v-if="errorMsg" class="hero__form-error">{{ errorMsg }}</p>

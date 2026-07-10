@@ -3,6 +3,16 @@ export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
 
+  vite: {
+    optimizeDeps: {
+      include: [
+        "@vue/devtools-core",
+        "@vue/devtools-kit",
+        "vue3-apexcharts",
+      ],
+    },
+  },
+
   runtimeConfig: {
     // Falls back to an obvious placeholder — server/plugins/startup.ts will
     // warn in dev and throw in production if this is still the default.

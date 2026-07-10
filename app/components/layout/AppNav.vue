@@ -21,14 +21,15 @@
     <div class="nav__right">
       <LayoutNotificationsBell v-if="isLoggedIn" />
 
-      <NuxtLink
+      <UiAppButton
         to="/submit"
+        size="sm"
         class="nav__cta"
         :aria-current="isActive('/submit') ? 'page' : undefined"
       >
         <IconsPlus />
         ارسال لینک
-      </NuxtLink>
+      </UiAppButton>
 
       <LayoutUserMenu
         v-if="isLoggedIn"

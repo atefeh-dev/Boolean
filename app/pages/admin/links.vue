@@ -6,18 +6,17 @@
         مدیریت لینک‌ها
       </h1>
       <div class="admin-status-pills">
-        <button
+        <UiAppChip
           v-for="tab in tabs"
           :key="tab.value"
-          type="button"
-          class="admin-status-pill"
-          :class="{ 'admin-status-pill--active': status === tab.value }"
+          size="sm"
+          :active="status === tab.value"
+          :count="toPersian(tab.count)"
           @click="setStatus(tab.value)"
         >
           <component :is="tab.icon" />
           {{ tab.label }}
-          <span class="admin-status-pill__count">{{ toPersian(tab.count) }}</span>
-        </button>
+        </UiAppChip>
       </div>
     </div>
 
@@ -59,8 +58,8 @@
             </div>
           </div>
           <div class="admin-card__actions">
-            <button class="btn-submit" :disabled="actingId === link.id" @click="saveEdits(link.id)">ذخیره</button>
-            <button class="admin-reject" @click="cancelEdit">انصراف</button>
+            <UiAppButton size="sm" :disabled="actingId === link.id" @click="saveEdits(link.id)">ذخیره</UiAppButton>
+            <UiAppButton variant="danger" size="sm" @click="cancelEdit">انصراف</UiAppButton>
           </div>
         </template>
 
@@ -87,18 +86,18 @@
           </div>
           <div class="admin-card__actions">
             <template v-if="status === 'PENDING'">
-              <button class="btn-submit" :disabled="actingId === link.id" @click="act(link.id, 'approve')">
+              <UiAppButton size="sm" :disabled="actingId === link.id" @click="act(link.id, 'approve')">
                 <IconsCheckCircle />
                 تأیید
-              </button>
-              <button class="admin-reject" :disabled="actingId === link.id" @click="act(link.id, 'reject')">
+              </UiAppButton>
+              <UiAppButton variant="danger" size="sm" :disabled="actingId === link.id" @click="act(link.id, 'reject')">
                 <IconsXCircle />
                 رد
-              </button>
+              </UiAppButton>
             </template>
-            <button class="admin-edit-btn" @click="startEdit(link)">
+            <UiAppButton variant="subtle" size="sm" @click="startEdit(link)">
               ویرایش
-            </button>
+            </UiAppButton>
           </div>
         </template>
 
@@ -107,9 +106,9 @@
 
     <!-- Pagination -->
     <div v-if="total > pageSize" class="admin-pagination">
-      <button :disabled="page === 1" @click="goToPage(page - 1)">‹ قبلی</button>
+      <UiAppButton variant="line" size="sm" :disabled="page === 1" @click="goToPage(page - 1)">‹ قبلی</UiAppButton>
       <span>صفحه {{ toPersian(page) }} از {{ toPersian(totalPages) }}</span>
-      <button :disabled="page === totalPages" @click="goToPage(page + 1)">بعدی ›</button>
+      <UiAppButton variant="line" size="sm" :disabled="page === totalPages" @click="goToPage(page + 1)">بعدی ›</UiAppButton>
     </div>
   </div>
 </template>

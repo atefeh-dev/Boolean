@@ -35,9 +35,9 @@
             <NuxtLink to="/forgot-password">فراموشی رمز عبور؟</NuxtLink>
           </div>
 
-          <button type="submit" class="auth-btn" :disabled="loading">
+          <UiAppButton type="submit" shape="rounded" size="lg" block class="auth-cta" :disabled="loading">
             {{ loading ? "در حال ورود..." : "ورود به حساب" }}
-          </button>
+          </UiAppButton>
         </form>
 
         <p class="auth-card__foot">

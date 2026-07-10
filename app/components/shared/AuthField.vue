@@ -16,16 +16,17 @@
         :required="required"
         @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
       />
-      <button
+      <UiAppButton
         v-if="isPassword"
-        type="button"
+        variant="icon-ghost"
+        shape="rounded"
         class="auth-field__toggle"
         :aria-label="visible ? 'پنهان کردن رمز عبور' : 'نمایش رمز عبور'"
         @click="visible = !visible"
       >
         <IconsEyeOff v-if="visible" />
         <IconsEye v-else />
-      </button>
+      </UiAppButton>
     </div>
   </div>
 </template>

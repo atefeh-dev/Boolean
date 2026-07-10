@@ -17,12 +17,12 @@
       </p>
 
       <div class="admin-hero__actions">
-        <button type="button" class="admin-hero__btn admin-hero__btn--primary" @click="$emit('review')">
+        <UiAppButton variant="clay" @click="$emit('review')">
           بررسی لینک‌های در انتظار
-        </button>
-        <button type="button" class="admin-hero__btn admin-hero__btn--ghost" @click="$emit('newsletter')">
+        </UiAppButton>
+        <UiAppButton variant="ghost" @click="$emit('newsletter')">
           مدیریت خبرنامه
-        </button>
+        </UiAppButton>
       </div>
     </div>
   </section>

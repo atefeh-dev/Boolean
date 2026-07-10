@@ -118,21 +118,7 @@
 
       /* ── Detail view ── */
       .back-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        font-size: 0.875rem;
-        font-weight: 700;
-        color: var(--clay);
         margin-bottom: 24px;
-        cursor: pointer;
-        border: none;
-        background: none;
-        font-family: var(--font);
-        transition: opacity 0.15s var(--ease);
-      }
-      .back-btn:hover {
-        opacity: 0.75;
       }
       .cat-section {
         display: none;

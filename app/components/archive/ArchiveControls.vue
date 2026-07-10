@@ -14,17 +14,14 @@
       />
     </div>
     <div class="filter-chips" role="tablist" aria-label="فیلتر دسته‌بندی">
-      <button
+      <UiAppChip
         v-for="chip in chips"
         :key="chip.id || 'all'"
-        type="button"
-        class="chip"
-        :class="{ 'chip--active': activeCategory === chip.id }"
-        :aria-selected="activeCategory === chip.id ? 'true' : 'false'"
+        :active="activeCategory === chip.id"
         @click="emit('update:activeCategory', chip.id)"
       >
         {{ chip.label }}
-      </button>
+      </UiAppChip>
     </div>
   </div>
 </template>

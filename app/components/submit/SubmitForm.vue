@@ -26,7 +26,7 @@
         از مشارکت شما ممنونیم. لینک شما در صف بررسی قرار گرفت و پس از تأیید
         در بولتن منتشر می‌شود.
       </p>
-      <button type="button" class="btn-submit" @click="reset">ارسال لینک دیگری</button>
+      <UiAppButton type="button" size="lg" class="btn-submit" @click="reset">ارسال لینک دیگری</UiAppButton>
     </div>
 
     <!-- Form state -->
@@ -133,9 +133,9 @@
           </p>
         </div>
 
-        <button type="submit" class="btn-submit" :disabled="submitting">
+        <UiAppButton type="submit" size="lg" class="btn-submit" :disabled="submitting">
           {{ submitting ? "در حال ارسال..." : "ارسال لینک" }}
-        </button>
+        </UiAppButton>
       </form>
     </div>
   </div>
