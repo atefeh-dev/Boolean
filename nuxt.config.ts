@@ -30,6 +30,7 @@ export default defineNuxtConfig({
           href: "https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Newsreader:ital@1&display=swap",
         },
         { rel: "icon", type: "image/svg+xml", href: "/icon.svg" },
+        { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
       ],
     },
   },

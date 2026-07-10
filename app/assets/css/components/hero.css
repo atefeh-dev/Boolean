@@ -168,16 +168,16 @@
       }
       .hero__success-icon {
         flex-shrink: 0;
-        width: 26px;
-        height: 26px;
-        animation: smile-breathe 2.6s ease-in-out infinite;
+        width: 19px;
+        height: 19px;
+        animation: heart-beat 2.6s ease-in-out infinite;
       }
-      @keyframes smile-breathe {
+      @keyframes heart-beat {
         0%, 100% { transform: scale(1); }
         50% { transform: scale(1.08); }
       }
       .hero__success-title {
-        font-size: 1.1875rem;
+        font-size: 0.89rem;
         font-weight: 800;
         color: #eff1e7;
       }
