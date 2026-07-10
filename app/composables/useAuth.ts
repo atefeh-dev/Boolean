@@ -3,6 +3,7 @@ export interface AuthUser {
   name: string
   email: string
   role: 'USER' | 'ADMIN'
+  subscribed: boolean
 }
 
 interface MeResponse {
@@ -51,13 +52,16 @@ export function useAuth() {
 
   async function login(email: string, password: string) {
     try {
-      const res = await $fetch<{ user: AuthUser }>('/api/auth/login', {
+      await $fetch('/api/auth/login', {
         method: 'POST',
         body: { email, password },
       })
-      user.value = res.user
-      initialized.value = true
-      return res.user
+      // Don't trust the login response's echoed user object — refetch from
+      // /me, the single canonical source for derived fields like
+      // `subscribed`. Two endpoints independently computing the same
+      // derived value is exactly what caused this to drift out of sync.
+      await fetchUser()
+      return user.value
     } catch (err) {
       throw new Error(extractErrorMessage(err, 'ورود ناموفق بود.'))
     }
@@ -65,13 +69,12 @@ export function useAuth() {
 
   async function register(name: string, email: string, password: string) {
     try {
-      const res = await $fetch<{ user: AuthUser }>('/api/auth/register', {
+      await $fetch('/api/auth/register', {
         method: 'POST',
         body: { name, email, password },
       })
-      user.value = res.user
-      initialized.value = true
-      return res.user
+      await fetchUser()
+      return user.value
     } catch (err) {
       throw new Error(extractErrorMessage(err, 'ثبت‌نام ناموفق بود.'))
     }
@@ -85,5 +88,11 @@ export function useAuth() {
     }
   }
 
-  return { user, isLoggedIn, initialized, fetchUser, ensureFetched, login, register, logout }
+  // Called right after a successful newsletter subscribe so the nav/hero
+  // reflect it immediately, without waiting on a full /me refetch.
+  function markSubscribed() {
+    if (user.value) user.value.subscribed = true
+  }
+
+  return { user, isLoggedIn, initialized, fetchUser, ensureFetched, login, register, logout, markSubscribed }
 }

@@ -34,6 +34,12 @@ model Subscriber {
   email     String   @unique
   createdAt DateTime @default(now())
 
+  // Set when the subscribing email belongs to (or is later claimed by) a
+  // logged-in account, so subscribed status can follow the account across
+  // browsers/devices instead of living in browser storage.
+  userId String? @unique
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
   @@map("subscribers")
 }
 
@@ -65,6 +71,7 @@ model User {
   links       Link[]
   resetTokens PasswordResetToken[]
   dismissedNotifications NotificationDismissal[]
+  subscriber  Subscriber?
 
   @@map("users")
 }

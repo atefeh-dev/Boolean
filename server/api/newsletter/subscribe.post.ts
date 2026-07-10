@@ -11,10 +11,31 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: "ایمیل معتبر وارد کنید." });
   }
 
-  const existing = await prisma.subscriber.findUnique({ where: { email } });
-  if (existing) return { ok: true, alreadySubscribed: true };
+  const session = await getVerifiedSessionUser(event);
 
-  await prisma.subscriber.create({ data: { email } });
+  let existing;
+  try {
+    existing = await prisma.subscriber.findUnique({ where: { email } });
+
+    if (existing) {
+      // Claim an anonymous subscription for the logged-in account so it's
+      // recognized on other browsers/devices from now on.
+      if (session && existing.userId !== session.sub) {
+        await prisma.subscriber.update({
+          where: { email },
+          data: { userId: session.sub },
+        });
+      }
+      return { ok: true, alreadySubscribed: true };
+    }
+
+    await prisma.subscriber.create({
+      data: { email, userId: session?.sub },
+    });
+  } catch (err) {
+    console.error(`[newsletter] subscribe failed — ${diagnosePrismaSchemaDrift(err)}`, err);
+    throw createError({ statusCode: 500, statusMessage: "مشکلی پیش آمد. دوباره تلاش کنید." });
+  }
 
   try {
     await sendMail({

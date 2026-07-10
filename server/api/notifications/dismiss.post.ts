@@ -8,7 +8,7 @@
  * produces a new, distinct notification id).
  */
 export default defineEventHandler(async (event) => {
-  const session = await getSessionUser(event);
+  const session = await getVerifiedSessionUser(event);
   if (!session) {
     throw createError({ statusCode: 401, statusMessage: "ابتدا وارد شوید." });
   }

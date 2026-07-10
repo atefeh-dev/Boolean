@@ -39,5 +39,13 @@ export default defineEventHandler(async (event) => {
     sub: user.id, email: user.email, name: user.name, role: user.role,
   });
 
-  return { user: { id: user.id, name: user.name, email: user.email, role: user.role } };
+  // Same email could already be on the newsletter list anonymously.
+  const subscriber = await prisma.subscriber.findUnique({ where: { email: user.email } });
+  if (subscriber && subscriber.userId !== user.id) {
+    await prisma.subscriber.update({ where: { email: user.email }, data: { userId: user.id } });
+  }
+
+  return {
+    user: { id: user.id, name: user.name, email: user.email, role: user.role, subscribed: !!subscriber },
+  };
 });

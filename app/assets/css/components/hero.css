@@ -157,6 +157,40 @@
         font-size: 0.8125rem;
         color: rgba(239, 241, 231, 0.52);
       }
+
+      /* ── Success state — replaces the form in-place ── */
+      .hero__success {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+        text-align: right;
+      }
+      .hero__success-icon {
+        flex-shrink: 0;
+        width: 26px;
+        height: 26px;
+        animation: smile-breathe 2.6s ease-in-out infinite;
+      }
+      @keyframes smile-breathe {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.08); }
+      }
+      .hero__success-title {
+        font-size: 1.1875rem;
+        font-weight: 800;
+        color: #eff1e7;
+      }
+
+      .hero-swap-fade-enter-active,
+      .hero-swap-fade-leave-active {
+        transition: opacity var(--dur-base) var(--ease), transform var(--dur-base) var(--ease);
+      }
+      .hero-swap-fade-enter-from,
+      .hero-swap-fade-leave-to {
+        opacity: 0;
+        transform: translateY(4px);
+      }
       .hero__art {
         width: 100%;
         height: 100%;
