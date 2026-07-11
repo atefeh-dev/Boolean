@@ -6,9 +6,12 @@ export default defineNuxtConfig({
   vite: {
     optimizeDeps: {
       include: [
+        "@vee-validate/zod",
         "@vue/devtools-core",
         "@vue/devtools-kit",
+        "vee-validate",
         "vue3-apexcharts",
+        "zod",
       ],
     },
   },

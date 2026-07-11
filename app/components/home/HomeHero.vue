@@ -27,7 +27,10 @@
               placeholder="ایمیل شما"
               dir="ltr"
               :disabled="status !== 'idle'"
+              :class="{ 'is-invalid': !!fieldError }"
+              :aria-invalid="!!fieldError"
               required
+              @blur="emailBlurred = true"
             />
             <UiAppButton
               type="submit"
@@ -44,7 +47,7 @@
             </UiAppButton>
           </form>
 
-          <p v-if="errorMsg" class="hero__form-error">{{ errorMsg }}</p>
+          <UiFieldError v-if="displayError" :message="displayError" variant="light" />
           <p v-else class="hero__note">بدون اسپم. هر روز کاری، یک ایمیل کوتاه.</p>
         </div>
       </Transition>
@@ -55,15 +58,26 @@
 
 <script setup lang="ts">
 import { ref, computed } from "vue";
+import { useField } from "vee-validate";
+import { toTypedSchema } from "@vee-validate/zod";
+import { subscribeSchema } from "#shared/validation/schemas";
 
 const { user, isLoggedIn, markSubscribed } = useAuth();
 
-const email = ref("");
+// A single-field form doesn't need the full useZodForm() ceremony — useField
+// on its own, pinned to the same shared schema, is enough here.
+const { value: email, errorMessage: fieldError } = useField<string>(
+  "email",
+  toTypedSchema(subscribeSchema.shape.email),
+  { initialValue: "" }
+);
+const emailBlurred = ref(false);
+
 // Only tracks the current submit attempt (idle/loading) — not "have they
 // ever subscribed", which now lives in the account (or, for guests, a
 // cookie) rather than component/page state.
 const status = useState<"idle" | "loading">("newsletter_submit_status", () => "idle");
-const errorMsg = ref("");
+const serverError = ref("");
 
 const guestSubscribedCookie = useNewsletterGuestCookie();
 
@@ -71,10 +85,18 @@ const isSubscribed = computed(() =>
   isLoggedIn.value ? !!user.value?.subscribed : guestSubscribedCookie.value === "1"
 );
 
+// Inline format errors only once the person has actually left the field —
+// not while they're still mid-typing their first character. Server errors
+// (rate limit, etc.) always take priority once they exist.
+const displayError = computed(() =>
+  serverError.value || (emailBlurred.value ? fieldError.value : "") || ""
+);
+
 async function onSubscribe() {
-  if (!email.value.trim() || status.value !== "idle") return;
+  emailBlurred.value = true;
+  if (fieldError.value || status.value !== "idle") return;
   status.value = "loading";
-  errorMsg.value = "";
+  serverError.value = "";
 
   try {
     // Both a fresh signup and an already-subscribed email land the same
@@ -100,13 +122,14 @@ async function onSubscribe() {
     }
 
     email.value = "";
+    emailBlurred.value = false;
     status.value = "idle";
   } catch (err) {
     const msg =
       err && typeof err === "object" && "data" in err
         ? (err as { data?: { statusMessage?: string } }).data?.statusMessage
         : undefined;
-    errorMsg.value = msg || "مشکلی پیش آمد. دوباره تلاش کنید.";
+    serverError.value = msg || "مشکلی پیش آمد. دوباره تلاش کنید.";
     status.value = "idle";
   }
 }

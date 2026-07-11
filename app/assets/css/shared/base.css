@@ -12,6 +12,15 @@
         --clay-soft: #e9d8c8;
         --gold: #b08d46;
         --hero-paper: #eff1e7;
+        /* Dedicated to validation/error states only — kept separate from
+           --clay, which is a brand accent reused elsewhere for focus rings,
+           selected pills, and decorative marks. Errors need their own
+           unambiguous color so they don't get muddled with normal
+           interactive/brand styling. Lighter and shifted toward true red
+           (vs. clay's warm brown) so it reads clearly as "error" without
+           feeling heavy on a full input/textarea background. */
+        --error: #c1584c;
+        --error-soft: #f6e0dc;
         --font: "Vazirmatn", "Tahoma", "Arial", sans-serif;
         --font-meta: "Newsreader", Georgia, serif;
 

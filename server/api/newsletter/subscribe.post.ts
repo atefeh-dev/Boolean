@@ -1,15 +1,10 @@
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+import { subscribeSchema } from "#shared/validation/schemas";
 
 export default defineEventHandler(async (event) => {
   // 5 subscribe attempts per hour per IP
   enforceRateLimit(`subscribe:${getClientIp(event)}`, 5, 60 * 60_000);
 
-  const body  = await readBody<{ email?: string }>(event);
-  const email = body.email?.trim().toLowerCase().slice(0, 254);
-
-  if (!email || !EMAIL_RE.test(email)) {
-    throw createError({ statusCode: 400, statusMessage: "ایمیل معتبر وارد کنید." });
-  }
+  const { email } = await validateBody(event, subscribeSchema);
 
   const session = await getVerifiedSessionUser(event);
 

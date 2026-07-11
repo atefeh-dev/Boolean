@@ -1,15 +1,10 @@
+import { loginSchema } from "#shared/validation/schemas";
+
 export default defineEventHandler(async (event) => {
   // 5 attempts per 15 minutes per IP
   enforceRateLimit(`login:${getClientIp(event)}`, 5, 15 * 60_000);
 
-  const body = await readBody<{ email?: string; password?: string }>(event);
-
-  const email    = body.email?.trim().toLowerCase();
-  const password = body.password;
-
-  if (!email || !password) {
-    throw createError({ statusCode: 400, statusMessage: "ایمیل و رمز عبور الزامی هستند." });
-  }
+  const { email, password } = await validateBody(event, loginSchema);
 
   // Timing-safe: always run bcrypt even when user not found, to prevent
   // user-enumeration via response-time differences.

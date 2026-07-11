@@ -36,75 +36,87 @@
         فرم زیر را پر کنید تا لینک شما برای بررسی به دست ما برسد.
       </p>
 
-      <p v-if="errorMsg" class="auth-error">{{ errorMsg }}</p>
+      <p v-if="serverError" class="auth-error">{{ serverError }}</p>
 
       <form
         id="submit-form"
         novalidate
-        @submit.prevent="handleSubmit"
+        @submit.prevent="onSubmit"
       >
         <div class="field">
           <label class="field-label" for="f-url">آدرس لینک</label>
-          <div class="field-wrap">
+          <div class="field-wrap" :class="{ 'field-wrap--invalid': !!errors.url }">
             <input
               id="f-url"
-              v-model="form.url"
+              v-model="url"
+              v-bind="urlAttrs"
               type="url"
               name="url"
               placeholder="https://example.com/article"
               required
+              :aria-invalid="!!errors.url"
             />
           </div>
+          <UiFieldError :message="errors.url" />
         </div>
 
         <div class="field">
           <label class="field-label" for="f-title">عنوان</label>
-          <div class="field-wrap">
+          <div class="field-wrap" :class="{ 'field-wrap--invalid': !!errors.title }">
             <input
               id="f-title"
-              v-model="form.title"
+              v-model="title"
+              v-bind="titleAttrs"
               type="text"
               name="title"
               maxlength="80"
               required
               placeholder="عنوان مقاله یا محتوا"
+              :aria-invalid="!!errors.title"
             />
             <span class="char-count">{{ toPersian(titleRemaining) }}</span>
           </div>
+          <UiFieldError :message="errors.title" />
         </div>
 
         <div class="field">
           <label class="field-label" for="f-body">توضیح</label>
-          <div class="field-wrap">
+          <div class="field-wrap" :class="{ 'field-wrap--invalid': !!errors.body }">
             <textarea
               id="f-body"
-              v-model="form.body"
+              v-model="body"
+              v-bind="bodyAttrs"
               name="body"
               maxlength="150"
               rows="3"
               placeholder="توضیح کوتاهی درباره این لینک و اینکه چرا ارزش خواندن دارد..."
+              :aria-invalid="!!errors.body"
             />
             <span class="char-count">{{ toPersian(bodyRemaining) }}</span>
           </div>
-          <p class="field-hint">Markdown پشتیبانی می‌شود.</p>
+          <UiFieldError :message="errors.body" />
+          <p v-if="!errors.body" class="field-hint">Markdown پشتیبانی می‌شود.</p>
         </div>
 
         <div class="field">
           <label class="field-label" for="f-credit">اعتبار</label>
-          <div class="field-wrap">
+          <div class="field-wrap" :class="{ 'field-wrap--invalid': !!errors.credit }">
             <input
               id="f-credit"
-              v-model="form.credit"
+              v-model="credit"
+              v-bind="creditAttrs"
               type="text"
               name="credit"
               maxlength="20"
               placeholder="@username"
               dir="ltr"
               style="text-align: left"
+              :aria-invalid="!!errors.credit"
             />
             <span class="char-count">{{ toPersian(creditRemaining) }}</span>
           </div>
-          <p class="field-hint">
+          <UiFieldError :message="errors.credit" />
+          <p v-if="!errors.credit" class="field-hint">
             نام کاربری توییتر فرد یا سازمانی که باید اعتبار این لینک به او داده
             شود.
           </p>
@@ -116,7 +128,7 @@
             <template v-for="category in submitCategories" :key="category.id">
               <input
                 :id="`c-${category.id}`"
-                v-model="form.categories"
+                v-model="categories"
                 type="checkbox"
                 name="categories"
                 :value="category.id"
@@ -128,7 +140,8 @@
               }}</label>
             </template>
           </div>
-          <p class="field-hint" style="margin-top: 10px">
+          <UiFieldError :message="errors.categories" />
+          <p v-if="!errors.categories" class="field-hint" style="margin-top: 10px">
             تا سه دسته‌بندی می‌توانید انتخاب کنید.
           </p>
         </div>
@@ -142,62 +155,64 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, computed } from "vue";
+import { ref, computed } from "vue";
+import { submitLinkSchema } from "#shared/validation/schemas";
 import { submitCategories } from "../../../data/content";
 import { toPersian } from "../../utils/persian";
 import SubmitAsideArt from "../art/SubmitAsideArt.vue";
 
-const form = reactive({
+const { defineField, errors, handleSubmit, resetForm } = useZodForm(submitLinkSchema, {
   url: "",
   title: "",
   body: "",
   credit: "",
-  categories: [] as string[],
+  categories: [],
 });
+
+const [url, urlAttrs] = defineField("url", { validateOnModelUpdate: false });
+const [title, titleAttrs] = defineField("title", { validateOnModelUpdate: false });
+const [body, bodyAttrs] = defineField("body", { validateOnModelUpdate: false });
+const [credit, creditAttrs] = defineField("credit", { validateOnModelUpdate: false });
+const [categories] = defineField("categories", { validateOnModelUpdate: false });
 
 const submitted = ref(false);
 const submitting = ref(false);
-const errorMsg = ref("");
+const serverError = ref("");
 
-const titleRemaining = computed(() => 80 - form.title.length);
-const bodyRemaining = computed(() => 150 - form.body.length);
-const creditRemaining = computed(() => 20 - form.credit.length);
+const titleRemaining = computed(() => 80 - (title.value?.length ?? 0));
+const bodyRemaining = computed(() => 150 - (body.value?.length ?? 0));
+const creditRemaining = computed(() => 20 - (credit.value?.length ?? 0));
 
 function limitCategories(event: Event) {
   const target = event.target as HTMLInputElement;
-  if (form.categories.length > 3) {
+  if ((categories.value?.length ?? 0) > 3) {
     target.checked = false;
-    form.categories = form.categories.filter((id) => id !== target.value);
+    categories.value = (categories.value ?? []).filter((id) => id !== target.value);
   }
 }
 
-async function handleSubmit() {
-  if (!form.url.trim() || !form.title.trim()) return;
-  errorMsg.value = "";
+const onSubmit = handleSubmit(async (values) => {
+  serverError.value = "";
   submitting.value = true;
   try {
-    await $fetch("/api/links", {
-      method: "POST",
-      body: {
-        url: form.url,
-        title: form.title,
-        body: form.body,
-        credit: form.credit,
-        categories: form.categories,
-      },
-    });
+    await $fetch("/api/links", { method: "POST", body: values });
     submitted.value = true;
   } catch (err) {
-    errorMsg.value =
-      err instanceof Error ? err.message : "ارسال لینک ناموفق بود.";
+    const msg =
+      err && typeof err === "object" && "data" in err
+        ? (err as { data?: { statusMessage?: string } }).data?.statusMessage
+        : undefined;
+    serverError.value = msg || "ارسال لینک ناموفق بود.";
   } finally {
     submitting.value = false;
   }
-}
+});
 
 function reset() {
   submitted.value = false;
-  errorMsg.value = "";
-  Object.assign(form, { url: "", title: "", body: "", credit: "", categories: [] });
+  serverError.value = "";
+  resetForm({
+    values: { url: "", title: "", body: "", credit: "", categories: [] },
+  });
 }
 </script>

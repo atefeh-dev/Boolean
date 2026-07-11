@@ -1,22 +1,9 @@
-const MIN_PW = 8;
-const MAX_PW = 128;
+import { resetPasswordSchema } from "#shared/validation/schemas";
 
 export default defineEventHandler(async (event) => {
   enforceRateLimit(`reset:${getClientIp(event)}`, 10, 60 * 60_000);
 
-  const body     = await readBody<{ token?: string; password?: string }>(event);
-  const token    = body.token?.trim();
-  const password = body.password ?? "";
-
-  if (!token || !password) {
-    throw createError({ statusCode: 400, statusMessage: "توکن و رمز عبور الزامی هستند." });
-  }
-  if (password.length < MIN_PW) {
-    throw createError({ statusCode: 400, statusMessage: `رمز عبور باید حداقل ${MIN_PW} کاراکتر باشد.` });
-  }
-  if (password.length > MAX_PW) {
-    throw createError({ statusCode: 400, statusMessage: "رمز عبور بیش از حد طولانی است." });
-  }
+  const { token, password } = await validateBody(event, resetPasswordSchema);
 
   // Only fetch fields we need — do NOT include passwordHash or other sensitive data.
   const record = await prisma.passwordResetToken.findUnique({

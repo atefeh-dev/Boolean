@@ -41,7 +41,7 @@
 
           <p v-if="errorMsg" class="auth-error">{{ errorMsg }}</p>
 
-          <form novalidate @submit.prevent="handleSubmit">
+          <form novalidate @submit.prevent="onSubmit">
             <SharedAuthField
               id="f-password"
               v-model="password"
@@ -50,6 +50,8 @@
               name="password"
               autocomplete="new-password"
               placeholder="حداقل ۸ کاراکتر"
+              :error="errors.password"
+              @blur="passwordAttrs.onBlur"
             />
             <SharedAuthField
               id="f-confirm"
@@ -59,6 +61,8 @@
               name="confirm"
               autocomplete="new-password"
               placeholder="همان رمز عبور بالا"
+              :error="errors.confirm"
+              @blur="confirmAttrs.onBlur"
             />
             <UiAppButton type="submit" shape="rounded" size="lg" block class="auth-cta" :disabled="loading">
               {{ loading ? "در حال ذخیره..." : "ذخیره رمز عبور" }}
@@ -73,32 +77,31 @@
 
 <script setup lang="ts">
 import IconsCheckCircle from "../components/icons/CheckCircle.vue"
+import { resetPasswordFormSchema } from "#shared/validation/schemas"
 
 definePageMeta({ layout: "auth", title: "بولتن — تغییر رمز عبور" })
 
 const route = useRoute()
 const token = computed(() => route.query.token as string | undefined)
-const password = ref("")
-const confirm = ref("")
+
+const { defineField, errors, handleSubmit } = useZodForm(resetPasswordFormSchema, {
+  password: "",
+  confirm: "",
+})
+const [password, passwordAttrs] = defineField("password", { validateOnModelUpdate: false })
+const [confirm, confirmAttrs] = defineField("confirm", { validateOnModelUpdate: false })
+
 const loading = ref(false)
 const errorMsg = ref("")
 const done = ref(false)
 
-async function handleSubmit() {
+const onSubmit = handleSubmit(async (values) => {
   errorMsg.value = ""
-  if (password.value.length < 8) {
-    errorMsg.value = "رمز عبور باید حداقل ۸ کاراکتر باشد."
-    return
-  }
-  if (password.value !== confirm.value) {
-    errorMsg.value = "رمز عبور و تکرار آن یکسان نیستند."
-    return
-  }
   loading.value = true
   try {
     await $fetch("/api/auth/reset-password", {
       method: "POST",
-      body: { token: token.value, password: password.value },
+      body: { token: token.value, password: values.password },
     })
     done.value = true
   } catch (err) {
@@ -109,5 +112,5 @@ async function handleSubmit() {
   } finally {
     loading.value = false
   }
-}
+})
 </script>

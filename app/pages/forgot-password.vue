@@ -32,7 +32,7 @@
 
           <p v-if="errorMsg" class="auth-error">{{ errorMsg }}</p>
 
-          <form novalidate @submit.prevent="handleSubmit">
+          <form novalidate @submit.prevent="onSubmit">
             <SharedAuthField
               id="f-email"
               v-model="email"
@@ -42,6 +42,8 @@
               autocomplete="email"
               placeholder="you@example.com"
               :disabled="loading"
+              :error="errors.email"
+              @blur="emailAttrs.onBlur"
             />
 
             <UiAppButton type="submit" shape="rounded" size="lg" block class="auth-cta" :disabled="loading">
@@ -61,30 +63,32 @@
 
 <script setup lang="ts">
 import IconsMail from "../components/icons/Mail.vue"
+import { forgotPasswordSchema } from "#shared/validation/schemas"
 
 definePageMeta({ layout: "auth", title: "بولتن — فراموشی رمز عبور" })
 
-const email = ref("")
+const { defineField, errors, handleSubmit } = useZodForm(forgotPasswordSchema, { email: "" })
+const [email, emailAttrs] = defineField("email", { validateOnModelUpdate: false })
+
 const loading = ref(false)
 const errorMsg = ref("")
 const sent = ref(false)
 const sentEmail = ref("")
 
-async function handleSubmit() {
-  if (!email.value.trim()) return
+const onSubmit = handleSubmit(async (values) => {
   loading.value = true
   errorMsg.value = ""
   try {
     await $fetch("/api/auth/forgot-password", {
       method: "POST",
-      body: { email: email.value },
+      body: { email: values.email },
     })
-    sentEmail.value = email.value.trim()
+    sentEmail.value = values.email
     sent.value = true
   } catch (err) {
     errorMsg.value = err instanceof Error ? err.message : "خطایی رخ داد."
   } finally {
     loading.value = false
   }
-}
+})
 </script>

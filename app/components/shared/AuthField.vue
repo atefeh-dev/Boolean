@@ -3,7 +3,10 @@
     <label class="auth-field__label" :for="id">{{ label }}</label>
     <div
       class="auth-field__wrap"
-      :class="{ 'auth-field__wrap--password': isPassword }"
+      :class="{
+        'auth-field__wrap--password': isPassword,
+        'auth-field__wrap--invalid': !!error,
+      }"
     >
       <input
         :id="id"
@@ -14,7 +17,10 @@
         :placeholder="placeholder"
         :disabled="disabled"
         :required="required"
+        :aria-invalid="!!error"
+        :aria-describedby="error ? `${id}-error` : undefined"
         @input="$emit('update:modelValue', ($event.target as HTMLInputElement).value)"
+        @blur="$emit('blur')"
       />
       <UiAppButton
         v-if="isPassword"
@@ -28,6 +34,7 @@
         <IconsEye v-else />
       </UiAppButton>
     </div>
+    <UiFieldError :id="`${id}-error`" :message="error" />
   </div>
 </template>
 
@@ -42,12 +49,14 @@ const props = withDefaults(defineProps<{
   placeholder?: string
   disabled?: boolean
   required?: boolean
+  error?: string | null
 }>(), {
   type: 'text',
   required: true,
+  error: null,
 })
 
-defineEmits<{ 'update:modelValue': [v: string] }>()
+defineEmits<{ 'update:modelValue': [v: string]; blur: [] }>()
 
 const isPassword = computed(() => props.type === 'password')
 const visible = ref(false)

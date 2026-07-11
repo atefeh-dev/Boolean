@@ -13,32 +13,38 @@
 
         <p v-if="errorMsg" class="auth-error">{{ errorMsg }}</p>
 
-        <form novalidate @submit.prevent="handleSubmit">
+        <form novalidate @submit.prevent="onSubmit">
           <SharedAuthField
             id="f-name"
-            v-model="form.name"
+            v-model="name"
             label="نام"
             name="name"
             autocomplete="name"
             placeholder="نام شما"
+            :error="errors.name"
+            @blur="nameAttrs.onBlur"
           />
           <SharedAuthField
             id="f-email"
-            v-model="form.email"
+            v-model="email"
             label="ایمیل"
             type="text"
             name="email"
             autocomplete="email"
             placeholder="you@example.com"
+            :error="errors.email"
+            @blur="emailAttrs.onBlur"
           />
           <SharedAuthField
             id="f-password"
-            v-model="form.password"
+            v-model="password"
             label="رمز عبور"
             type="password"
             name="password"
             autocomplete="new-password"
             placeholder="حداقل ۸ کاراکتر"
+            :error="errors.password"
+            @blur="passwordAttrs.onBlur"
           />
 
           <UiAppButton type="submit" shape="rounded" size="lg" block class="auth-cta" :disabled="loading">
@@ -55,24 +61,31 @@
 </template>
 
 <script setup lang="ts">
+import { registerSchema } from "#shared/validation/schemas"
+
 definePageMeta({ layout: "auth", title: "بولتن — ثبت‌نام" })
 
 const route = useRoute()
 const router = useRouter()
 const { register } = useAuth()
-const form = reactive({ name: "", email: "", password: "" })
+
+const { defineField, errors, handleSubmit } = useZodForm(registerSchema, {
+  name: "",
+  email: "",
+  password: "",
+})
+const [name, nameAttrs] = defineField("name", { validateOnModelUpdate: false })
+const [email, emailAttrs] = defineField("email", { validateOnModelUpdate: false })
+const [password, passwordAttrs] = defineField("password", { validateOnModelUpdate: false })
+
 const loading = ref(false)
 const errorMsg = ref("")
 
-async function handleSubmit() {
+const onSubmit = handleSubmit(async (values) => {
   errorMsg.value = ""
-  if (form.password.length < 8) {
-    errorMsg.value = "رمز عبور باید حداقل ۸ کاراکتر باشد."
-    return
-  }
   loading.value = true
   try {
-    await register(form.name, form.email, form.password)
+    await register(values.name, values.email, values.password)
     const redirect = typeof route.query.redirect === "string" ? route.query.redirect : "/"
     router.push(redirect)
   } catch (err) {
@@ -80,5 +93,5 @@ async function handleSubmit() {
   } finally {
     loading.value = false
   }
-}
+})
 </script>

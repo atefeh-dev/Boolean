@@ -1,17 +1,11 @@
 import { randomBytes } from "node:crypto";
-
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+import { forgotPasswordSchema } from "#shared/validation/schemas";
 
 export default defineEventHandler(async (event) => {
   // 3 requests per 15 minutes per IP — prevents email flooding
   enforceRateLimit(`forgot:${getClientIp(event)}`, 3, 15 * 60_000);
 
-  const body  = await readBody<{ email?: string }>(event);
-  const email = body.email?.trim().toLowerCase().slice(0, 254);
-
-  if (!email || !EMAIL_RE.test(email)) {
-    throw createError({ statusCode: 400, statusMessage: "ایمیل معتبر وارد کنید." });
-  }
+  const { email } = await validateBody(event, forgotPasswordSchema);
 
   // Always return the same response — prevents user enumeration.
   const user = await prisma.user.findUnique({ where: { email } });
