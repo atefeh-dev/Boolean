@@ -32,8 +32,16 @@
     <div class="nav__right">
       <LayoutNotificationsBell />
 
-      <LayoutUserMenu :name="user?.name ?? ''" role-label="مدیر سیستم" @logout="handleLogout" />
+      <LayoutUserMenu
+        :name="user?.name ?? ''"
+        role-label="مدیر سیستم"
+        :subscribed="user?.subscribed"
+        @logout="handleLogout"
+        @unsubscribe="showUnsubscribeModal = true"
+      />
     </div>
+
+    <LayoutUnsubscribeModal v-model="showUnsubscribeModal" />
   </nav>
 </template>
 
@@ -42,6 +50,7 @@ const route = useRoute()
 const router = useRouter()
 const { user, logout } = useAuth()
 const { reset: resetNotifications } = useNotifications()
+const showUnsubscribeModal = ref(false)
 
 function exact(path: string) {
   return route.path === path

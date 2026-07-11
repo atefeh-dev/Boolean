@@ -461,6 +461,11 @@
       .user-menu__item--danger:hover {
         background: var(--clay-soft);
       }
+      .user-menu__divider {
+        height: 1px;
+        margin: 6px 4px;
+        background: var(--line);
+      }
       .user-menu-fade-enter-active,
       .user-menu-fade-leave-active {
         transition: opacity 0.12s ease, transform 0.12s ease;

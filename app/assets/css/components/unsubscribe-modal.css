@@ -1,0 +1,273 @@
+/* ── Unsubscribe modal ── */
+.unsub {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.unsub__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 34, 28, 0.6);
+  backdrop-filter: blur(3px);
+}
+.unsub__card {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  background: var(--surface);
+  border-radius: 28px;
+  box-shadow: 0 28px 72px rgba(15, 34, 28, 0.32);
+  padding: 8px 32px 36px;
+  text-align: center;
+}
+.unsub__close {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: none;
+  background: var(--surface-sunken);
+  color: var(--ink-faint);
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+}
+.unsub__close:hover {
+  background: var(--line);
+  color: var(--ink);
+}
+.unsub__close svg {
+  width: 15px;
+  height: 15px;
+}
+
+/* ── Art ── */
+.unsub__art {
+  width: 78%;
+  margin: 8px auto 0;
+}
+.unsub__art--shake {
+  animation: unsub-shake 0.12s ease-in-out infinite;
+}
+.unsub__art--jump {
+  animation: unsub-jump 1.4s var(--ease-out) 1;
+}
+@keyframes unsub-shake {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(1.5px); }
+}
+@keyframes unsub-jump {
+  0%, 100% { transform: translateY(0); }
+  20% { transform: translateY(-14px); }
+  40% { transform: translateY(0); }
+  55% { transform: translateY(-7px); }
+  70% { transform: translateY(0); }
+  85% { transform: translateY(-3px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .unsub__art--shake,
+  .unsub__art--jump {
+    animation: none;
+  }
+}
+
+/* Background blobs — a slow ambient breathe rather than true path
+   morphing (that needs GreenSock's paid MorphSVG plugin, which isn't
+   available here). Two soft, differently-timed pulses read as gentle
+   organic movement without it. */
+.unsub__blob {
+  fill: var(--hero-paper);
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: unsub-blob-breathe 9s var(--ease) infinite;
+}
+.unsub__blob--b {
+  animation-duration: 11s;
+  animation-delay: -3s;
+}
+@keyframes unsub-blob-breathe {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.05) rotate(3deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .unsub__blob {
+    animation: none;
+  }
+}
+
+/* Envelope */
+.unsub__env-bg {
+  fill: var(--gold);
+  stroke: var(--forest);
+  stroke-width: 5;
+}
+.unsub__paper {
+  fill: #fff;
+  stroke: var(--forest);
+  stroke-width: 5;
+}
+.unsub__env-back {
+  fill: var(--clay-soft);
+  stroke: var(--forest);
+  stroke-width: 5;
+}
+.unsub__env-front,
+.unsub__env-front-flap {
+  fill: none;
+  stroke: var(--forest);
+  stroke-width: 5;
+  stroke-linejoin: round;
+}
+.unsub__env-front-flap {
+  fill: var(--clay-soft);
+}
+
+/* Face — every state is a pre-drawn path already positioned correctly by
+   the original artwork; states crossfade via opacity instead of morphing
+   between them, which gets ~95% of the same feel without a paid plugin. */
+.unsub__eyes,
+.unsub__eyes-laughing,
+.unsub__mouth {
+  transform-box: fill-box;
+}
+.unsub__mouth-shape,
+.unsub__mouth-laughing {
+  fill: none;
+  stroke: var(--forest);
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-miterlimit: 10;
+  opacity: 0;
+  transition: opacity 0.18s var(--ease);
+}
+.unsub__mouth-shape.is-visible,
+.unsub__mouth-laughing.is-visible {
+  opacity: 1;
+}
+.unsub__mouth-open {
+  fill: var(--forest);
+  stroke: none;
+}
+.unsub__tongue {
+  fill: var(--gold);
+  stroke: none;
+}
+.unsub__eyes,
+.unsub__eyes-laughing {
+  opacity: 0;
+  transition: opacity 0.18s var(--ease);
+}
+.unsub__eyes.is-visible,
+.unsub__eyes-laughing.is-visible {
+  opacity: 1;
+}
+.unsub__eyes ellipse {
+  fill: var(--forest);
+}
+.unsub__eyes-laughing path {
+  fill: none;
+  stroke: var(--forest);
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-miterlimit: 10;
+}
+.unsub__eyebrow {
+  fill: none;
+  stroke: var(--forest);
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-miterlimit: 10;
+  transition: d 0.18s var(--ease);
+}
+
+/* Confetti — scattered on Cancel. Each piece starts at the envelope's
+   center (see the group's transform in the template) and animates out to
+   a pre-rolled random offset when `.is-active` is toggled on. */
+.unsub__confetti-piece {
+  opacity: 0;
+  transform: translate(0, 0) rotate(0deg);
+  transition: transform 0.9s var(--ease-out), opacity 0.3s var(--ease);
+}
+.unsub__confetti.is-active .unsub__confetti-piece {
+  opacity: 1;
+}
+.unsub__confetti-piece--square rect {
+  fill: var(--gold);
+}
+.unsub__confetti-piece--dot circle {
+  fill: var(--clay);
+}
+.unsub__confetti-piece--bowtie path {
+  stroke: var(--forest);
+}
+@media (prefers-reduced-motion: reduce) {
+  .unsub__confetti-piece {
+    transition: opacity 0.2s var(--ease);
+  }
+}
+
+/* ── Copy ── */
+.unsub__body {
+  margin-top: 20px;
+}
+.unsub__title {
+  font-family: var(--font);
+  font-size: 1.375rem;
+  font-weight: 800;
+  color: var(--ink);
+  margin: 0 0 8px;
+}
+.unsub__subtitle {
+  font-family: var(--font-meta);
+  font-size: 0.9375rem;
+  color: var(--ink-soft);
+  line-height: 1.6;
+  margin: 0 0 24px;
+}
+.unsub__subtitle--error {
+  color: var(--clay);
+  font-family: var(--font);
+}
+.unsub__actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* ── Modal transition ── */
+.unsub-fade-enter-active,
+.unsub-fade-leave-active {
+  transition: opacity var(--dur-base) var(--ease);
+}
+.unsub-fade-enter-from,
+.unsub-fade-leave-to {
+  opacity: 0;
+}
+.unsub-fade-enter-active .unsub__card,
+.unsub-fade-leave-active .unsub__card {
+  transition: transform var(--dur-base) var(--ease-out), opacity var(--dur-base) var(--ease);
+}
+.unsub-fade-enter-from .unsub__card,
+.unsub-fade-leave-to .unsub__card {
+  transform: translateY(12px) scale(0.98);
+  opacity: 0;
+}
+
+@media (max-width: 480px) {
+  .unsub__card {
+    padding: 8px 20px 28px;
+  }
+  .unsub__art {
+    width: 90%;
+  }
+}

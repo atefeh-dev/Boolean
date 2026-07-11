@@ -36,7 +36,9 @@
         :name="user?.name ?? ''"
         role-label="کاربر"
         :admin-link-to="user?.role === 'ADMIN' ? '/admin' : undefined"
+        :subscribed="user?.subscribed"
         @logout="handleLogout"
+        @unsubscribe="showUnsubscribeModal = true"
       />
 
       <div v-else class="nav__auth">
@@ -49,6 +51,8 @@
         </NuxtLink>
       </div>
     </div>
+
+    <LayoutUnsubscribeModal v-model="showUnsubscribeModal" />
   </nav>
 </template>
 
@@ -57,6 +61,7 @@ const route = useRoute()
 const router = useRouter()
 const { user, isLoggedIn, logout } = useAuth()
 const { reset: resetNotifications } = useNotifications()
+const showUnsubscribeModal = ref(false)
 
 function isActive(path: string) {
   return route.path === path || route.path.startsWith(`${path}/`)

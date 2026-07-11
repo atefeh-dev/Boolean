@@ -27,6 +27,17 @@
           <IconsDashboard />
           پنل مدیریت
         </NuxtLink>
+        <button
+          v-if="subscribed"
+          type="button"
+          class="user-menu__item"
+          role="menuitem"
+          @click="handleUnsubscribe"
+        >
+          <IconsMailOff />
+          لغو عضویت خبرنامه
+        </button>
+        <div v-if="subscribed" class="user-menu__divider" role="separator" />
         <button type="button" class="user-menu__item user-menu__item--danger" role="menuitem" @click="handleLogout">
           <IconsPower />
           خروج از حساب
@@ -41,9 +52,10 @@ const props = defineProps<{
   name: string
   roleLabel: string
   adminLinkTo?: string
+  subscribed?: boolean
 }>()
 
-const emit = defineEmits<{ logout: [] }>()
+const emit = defineEmits<{ logout: []; unsubscribe: [] }>()
 
 const open = ref(false)
 const root = ref<HTMLElement | null>(null)
@@ -53,6 +65,11 @@ const initial = computed(() => props.name?.trim()?.charAt(0) ?? '؟')
 function handleLogout() {
   open.value = false
   emit('logout')
+}
+
+function handleUnsubscribe() {
+  open.value = false
+  emit('unsubscribe')
 }
 
 function handleClickOutside(event: MouseEvent) {

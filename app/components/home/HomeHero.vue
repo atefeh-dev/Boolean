@@ -56,8 +56,6 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 
-const SUBSCRIBED_KEY = "booltan_subscribed";
-
 const { user, isLoggedIn, markSubscribed } = useAuth();
 
 const email = ref("");
@@ -67,18 +65,7 @@ const email = ref("");
 const status = useState<"idle" | "loading">("newsletter_submit_status", () => "idle");
 const errorMsg = ref("");
 
-// Guests have no account to attach a subscription to, so their status
-// falls back to a cookie for this browser. A cookie (unlike localStorage)
-// is sent with the initial request and readable during SSR, so the
-// success state renders correctly on the very first paint — no flash of
-// the form before flipping over on the client. Logged-in users always
-// defer to the account (see isSubscribed below), which is synced from the
-// server on every navigation via the auth middleware, so it's consistent
-// across browsers/devices without anything extra here.
-const guestSubscribedCookie = useCookie<"1" | undefined>(SUBSCRIBED_KEY, {
-  maxAge: 60 * 60 * 24 * 365,
-  sameSite: "lax",
-});
+const guestSubscribedCookie = useNewsletterGuestCookie();
 
 const isSubscribed = computed(() =>
   isLoggedIn.value ? !!user.value?.subscribed : guestSubscribedCookie.value === "1"

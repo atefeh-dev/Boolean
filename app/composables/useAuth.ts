@@ -94,5 +94,10 @@ export function useAuth() {
     if (user.value) user.value.subscribed = true
   }
 
-  return { user, isLoggedIn, initialized, fetchUser, ensureFetched, login, register, logout, markSubscribed }
+  // Counterpart for a successful unsubscribe.
+  function markUnsubscribed() {
+    if (user.value) user.value.subscribed = false
+  }
+
+  return { user, isLoggedIn, initialized, fetchUser, ensureFetched, login, register, logout, markSubscribed, markUnsubscribed }
 }
