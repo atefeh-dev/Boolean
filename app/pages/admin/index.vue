@@ -20,13 +20,29 @@
         :new-subs-last-week="data.subscribers.newLastWeek"
       />
 
-      <!-- ③ Charts row: publishing trend + category donut -->
+      <!-- ③ Charts row: members + category donut -->
       <div class="dash-row-charts">
-        <AdminPublishingChart :weekly-trend="data.weeklyTrend" />
-        <AdminCategoryChart   :categories="data.categories" />
+        <AdminMembersPanel :members="data.members" />
+        <AdminCategoryChart :categories="data.categories" />
       </div>
 
-      <!-- ④ Charts row 2: subscriber growth + queue -->
+      <!-- ④ Operational health: newsletter status + approval funnel -->
+      <div class="dash-row-charts dash-row-charts--50-50">
+        <AdminNewsletterPanel
+          :ready-count="data.newsletter.readyCount"
+          :last-sent-at="data.newsletter.lastSentAt"
+          :last-sent-count="data.newsletter.lastSentCount"
+          :days-since-sent="data.newsletter.daysSinceSent"
+        />
+        <AdminGrowthPanel
+          :total-submitted="data.funnel.total"
+          :approved="data.funnel.approved"
+          :rejected="data.funnel.rejected"
+          :approval-rate="data.funnel.approvalRate"
+        />
+      </div>
+
+      <!-- ⑤ Charts row 2: subscriber growth + queue -->
       <div class="dash-row-charts dash-row-charts--60-40">
         <AdminSubscriberChart :subscriber-weekly-trend="data.subscriberWeeklyTrend" />
         <AdminQueuePanel
@@ -35,7 +51,7 @@
         />
       </div>
 
-      <!-- ⑤ Bottom row: activity + contributors -->
+      <!-- ⑥ Bottom row: activity + contributors -->
       <div class="dash-row-charts dash-row-charts--50-50">
         <AdminActivityPanel      :activity="data.recentActivity" />
         <AdminContributorsPanel  :contributors="data.topContributors" />
@@ -66,12 +82,12 @@ interface Analytics {
   queue:                   { count: number; oldestDaysAgo: number | null; oldestTitle: string | null }
   newsletter:              { readyCount: number; lastSentAt: string | null; lastSentCount: number | null; daysSinceSent: number | null }
   subscribers:             { total: number; newThisWeek: number; newLastWeek: number; newToday: number }
+  members:                 { total: number; subscribedToday: number; subscribed: number; notSubscribed: number }
   funnel:                  { total: number; approved: number; rejected: number; pending: number; approvalRate: number }
   categories:              { id: string; label: string; publishedCount: number; lastPublishedDaysAgo: number | null }[]
   topContributors:         { name: string; email: string; submitted: number; approved: number; approvalRate: number }[]
   oldestPending:           { id: string; title: string; url: string; daysAgo: number; submittedBy: string | null; categories: { id: string; label: string }[] }[]
   recentActivity:          { type: string; title: string; meta: string; at: string }[]
-  weeklyTrend:             { label: string; published: number }[]
   subscriberWeeklyTrend:   { label: string; count: number }[]
 }
 

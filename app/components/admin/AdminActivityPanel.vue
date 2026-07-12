@@ -4,20 +4,22 @@
       <h3 class="dash-panel__title"><IconsList /> آخرین فعالیت‌ها</h3>
     </div>
 
-    <ul class="dash-feed">
-      <li v-for="item in activity" :key="item.at + item.title" class="dash-feed-item">
-        <span class="dash-feed-item__icon" :class="`type--${item.type}`">
-          <IconsCheckCircle v-if="item.type === 'published'" />
-          <IconsMail        v-else-if="item.type === 'subscribed'" />
-          <IconsClock       v-else />
-        </span>
-        <div class="dash-feed-item__body">
-          <p class="dash-feed-item__title">{{ item.title }}</p>
-          <p class="dash-feed-item__meta">{{ item.meta }} · {{ timeAgo(item.at) }}</p>
-        </div>
-      </li>
-      <li v-if="!activity.length" class="dash-empty-sm">هنوز فعالیتی ثبت نشده است.</li>
-    </ul>
+    <div class="dash-panel__body">
+      <ul class="dash-feed">
+        <li v-for="item in activity" :key="item.at + item.title" class="dash-feed-item">
+          <span class="dash-feed-item__icon" :class="`type--${item.type}`">
+            <IconsCheckCircle v-if="item.type === 'published'" />
+            <IconsMail        v-else-if="item.type === 'subscribed'" />
+            <IconsClock       v-else />
+          </span>
+          <div class="dash-feed-item__body">
+            <p class="dash-feed-item__title">{{ item.title }}</p>
+            <p class="dash-feed-item__meta">{{ item.meta }} · {{ timeAgo(item.at) }}</p>
+          </div>
+        </li>
+        <li v-if="!activity.length" class="dash-empty-sm">هنوز فعالیتی ثبت نشده است.</li>
+      </ul>
+    </div>
   </div>
 </template>
 

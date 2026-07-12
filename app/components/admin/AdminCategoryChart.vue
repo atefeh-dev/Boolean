@@ -8,21 +8,23 @@
       <span class="dash-panel__sub">{{ toPersian(total) }} لینک منتشرشده</span>
     </div>
 
-    <ClientOnly>
-      <apexchart
-        v-if="hasData"
-        type="donut"
-        :height="260"
-        :options="options"
-        :series="series"
-      />
-      <div v-else class="dash-chart-empty">
-        هنوز لینکی برای نمایش وجود ندارد.
-      </div>
-      <template #fallback>
-        <div class="dash-chart-skeleton" style="height:260px" />
-      </template>
-    </ClientOnly>
+    <div class="dash-panel__body">
+      <ClientOnly>
+        <apexchart
+          v-if="hasData"
+          type="donut"
+          :height="230"
+          :options="options"
+          :series="series"
+        />
+        <div v-else class="dash-chart-empty">
+          هنوز لینکی برای نمایش وجود ندارد.
+        </div>
+        <template #fallback>
+          <div class="dash-chart-skeleton" style="height:230px" />
+        </template>
+      </ClientOnly>
+    </div>
   </div>
 </template>
 

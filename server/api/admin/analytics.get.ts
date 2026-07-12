@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
     recentSubscribers, lastNewsletter, newsletterReadyCount,
     newSubsThisWeek, newSubsLastWeek,
     allCategories, publishedWithCats,
-    userSubmissions,
+    userSubmissions, notSubscribedCount,
   ] = await Promise.all([
     prisma.link.count({ where: { status: "PUBLISHED" } }),
     prisma.link.count({ where: { status: "PENDING" } }),
@@ -69,18 +69,10 @@ export default defineEventHandler(async (event) => {
       where: { submittedById: { not: null } },
       select: { id: true, status: true, submittedById: true, submittedBy: { select: { name: true, email: true } } },
     }),
-  ]);
 
-  // ── Derived: weekly trend (last 8 weeks) ────────────────────────────────
-  const weeklyTrend = Array.from({ length: 8 }, (_, i) => {
-    const daysBack = (7 - i) * 7;
-    const start = new Date(now.getTime() - (daysBack + 7) * 86_400_000);
-    const end   = new Date(now.getTime() - daysBack * 86_400_000);
-    const published = recentPublished.filter(
-      l => l.publishedAt && l.publishedAt >= start && l.publishedAt < end
-    ).length;
-    return { label: i === 7 ? "این هفته" : `${8 - i - 1}w`, published };
-  });
+    // Registered accounts that never subscribed to the newsletter
+    prisma.user.count({ where: { subscriber: null } }),
+  ]);
 
   // ── Derived: subscriber weekly trend ────────────────────────────────────
   const subscriberWeeklyTrend = Array.from({ length: 8 }, (_, i) => {
@@ -154,15 +146,25 @@ export default defineEventHandler(async (event) => {
   const publishedLastWeek = recentPublished.filter(l => l.publishedAt && l.publishedAt >= twoWeekAgo && l.publishedAt < weekAgo).length;
 
   // ── Derived: recent activity feed ───────────────────────────────────────
-  const activityPublished = recentPublished.slice(0, 6).map(l => ({
+  // Take up to 10 from EACH source before merging — not an arbitrary
+  // smaller split like 6/4. Taking N from each of two sources and merging
+  // is the only way to guarantee the true top-N of the combined list is
+  // present; a smaller per-type cap can silently drop genuinely-recent
+  // items of whichever type happens to be more active that day.
+  const activityPublished = recentPublished.slice(0, 10).map(l => ({
     type: "published" as const,
     title: l.title,
     meta: l.categories.map(c => c.label).join("، ") || "—",
     at: l.publishedAt?.toISOString() ?? now.toISOString(),
   }));
-  const activitySubscribed = recentSubscribers.slice(0, 4).map(s => ({
+  const activitySubscribed = recentSubscribers.slice(0, 10).map(s => ({
     type: "subscribed" as const,
-    title: s.email.replace(/(?<=.{3}).+(?=@)/, "***"),
+    // Mask the local part, keeping only the first 3 characters — but for
+    // short local parts (e.g. "ab@x.com"), a lookbehind requiring 3
+    // characters never matches at all, leaving the email fully unmasked.
+    // Cap the "kept" prefix at the local part's own length so it degrades
+    // to masking everything rather than masking nothing.
+    title: s.email.replace(/^(.{0,3})(.+)(?=@)/, (_m, keep: string, rest: string) => keep + "*".repeat(rest.length)),
     meta: "مشترک جدید",
     at: s.createdAt.toISOString(),
   }));
@@ -217,11 +219,12 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  // 🟡 Warning: newsletter overdue (not sent in >7 days, has content)
-  if ((daysSinceSent === null || daysSinceSent > 7) && newsletterReadyCount > 0) {
+  // 🟡 Warning: newsletter overdue (not sent in 2+ days, has content) — daily
+  // cadence, so anything beyond a day or two is actually stale, not weekly.
+  if ((daysSinceSent === null || daysSinceSent >= 2) && newsletterReadyCount > 0) {
     const msg = daysSinceSent === null
       ? "خبرنامه هرگز ارسال نشده است"
-      : "خبرنامه این هفته ارسال نشده است";
+      : "خبرنامه چند روزی است ارسال نشده است";
     actionItems.push({
       level: "warn",
       icon: "mail",
@@ -279,12 +282,17 @@ export default defineEventHandler(async (event) => {
       daysSinceSent,
     },
     subscribers: { total: subscriberCount, newThisWeek: newSubsThisWeek, newLastWeek: newSubsLastWeek, newToday: newSubsToday },
+    members: {
+      total: userCount,
+      subscribedToday: newSubsToday,
+      subscribed: userCount - notSubscribedCount,
+      notSubscribed: notSubscribedCount,
+    },
     funnel: { total: totalUserSubmitted, approved: totalApproved, rejected: totalRejected, pending: pendingCount, approvalRate },
     categories,
     topContributors,
     oldestPending,
     recentActivity,
-    weeklyTrend,
     actionItems,
     subscriberWeeklyTrend,
   };

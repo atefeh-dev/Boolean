@@ -17,21 +17,23 @@
       </div>
     </div>
 
-    <ClientOnly>
-      <apexchart
-        v-if="hasData"
-        type="bar"
-        :height="200"
-        :options="options"
-        :series="series"
-      />
-      <div v-else class="dash-chart-empty">
-        هنوز مشترکی در این بازه ثبت نشده است.
-      </div>
-      <template #fallback>
-        <div class="dash-chart-skeleton" style="height:200px" />
-      </template>
-    </ClientOnly>
+    <div class="dash-panel__body">
+      <ClientOnly>
+        <apexchart
+          v-if="hasData"
+          type="bar"
+          :height="220"
+          :options="options"
+          :series="series"
+        />
+        <div v-else class="dash-chart-empty">
+          هنوز مشترکی در این بازه ثبت نشده است.
+        </div>
+        <template #fallback>
+          <div class="dash-chart-skeleton" style="height:220px" />
+        </template>
+      </ClientOnly>
+    </div>
   </div>
 </template>
 
@@ -41,8 +43,6 @@ import IconsUsers from "../icons/Users.vue";
 const props = defineProps<{
   subscriberWeeklyTrend: { label: string; count: number }[]
 }>()
-
-const toP = (n: number) => String(n).replace(/\d/g, d => "۰۱۲۳۴۵۶۷۸۹"[+d]);
 
 const thisWeek = computed(() => props.subscriberWeeklyTrend.at(-1)?.count ?? 0);
 const lastWeek = computed(() => props.subscriberWeeklyTrend.at(-2)?.count ?? 0);
@@ -100,13 +100,13 @@ const options = computed(() => ({
     tickAmount: 4,
     labels: {
       style: { colors: "#868c82", fontFamily: "Vazirmatn", fontSize: "11px" },
-      formatter: (v: number) => toP(Math.round(v)),
+      formatter: (v: number) => toPersian(Math.round(v)),
     },
   },
   tooltip: {
     theme: "light",
     style: { fontFamily: "Vazirmatn" },
-    y: { formatter: (v: number) => `${toP(v)} مشترک جدید` },
+    y: { formatter: (v: number) => `${toPersian(v)} مشترک جدید` },
   },
 }));
 </script>

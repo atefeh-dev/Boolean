@@ -5,28 +5,33 @@
       <NuxtLink to="/admin/newsletter" class="dash-panel__link">مدیریت ←</NuxtLink>
     </div>
 
-    <!-- Ready indicator -->
-    <div class="dash-nl-ready" :class="readyClass">
-      <span class="dash-nl-ready__num">{{ toPersian(readyCount) }}</span>
-      <span class="dash-nl-ready__label">لینک آماده ارسال</span>
+    <div class="dash-panel__body dash-panel__body--top">
+      <!-- Ready indicator -->
+      <div class="dash-nl-ready" :class="readyClass">
+        <span class="dash-nl-ready__num">{{ toPersian(readyCount) }}</span>
+        <span class="dash-nl-ready__label">لینک آماده ارسال</span>
+      </div>
+
+      <div class="dash-nl-meta">
+        <div class="dash-nl-row">
+          <span class="dash-nl-row__label">آخرین ارسال</span>
+          <span class="dash-nl-row__val">{{ lastSentLabel }}</span>
+        </div>
+        <div class="dash-nl-row">
+          <span class="dash-nl-row__label">دریافت‌کنندگان</span>
+          <span class="dash-nl-row__val">{{ lastSentCount ? toPersian(lastSentCount) + ' نفر' : '—' }}</span>
+        </div>
+        <div class="dash-nl-row">
+          <span class="dash-nl-row__label">وضعیت</span>
+          <span class="dash-nl-row__val" :class="statusClass">{{ statusLabel }}</span>
+        </div>
+      </div>
     </div>
 
-    <div class="dash-nl-meta">
-      <div class="dash-nl-row">
-        <span class="dash-nl-row__label">آخرین ارسال</span>
-        <span class="dash-nl-row__val">{{ lastSentLabel }}</span>
-      </div>
-      <div class="dash-nl-row">
-        <span class="dash-nl-row__label">دریافت‌کنندگان</span>
-        <span class="dash-nl-row__val">{{ lastSentCount ? toPersian(lastSentCount) + ' نفر' : '—' }}</span>
-      </div>
-      <div class="dash-nl-row">
-        <span class="dash-nl-row__label">وضعیت</span>
-        <span class="dash-nl-row__val" :class="statusClass">{{ statusLabel }}</span>
-      </div>
-    </div>
-
-    <UiAppButton v-if="readyCount >= 3" to="/admin/newsletter" variant="forest" shape="rounded" block>
+    <!-- Pinned to the bottom of the card regardless of how much extra
+         height the row-stretch gives this panel — a call-to-action
+         belongs at the card's edge, not floating mid-card. -->
+    <UiAppButton v-if="readyCount >= 3" to="/admin/newsletter" variant="forest" shape="rounded" block class="dash-nl-cta">
       <IconsSend /> ارسال خبرنامه بعدی
     </UiAppButton>
   </div>
@@ -51,15 +56,15 @@ const lastSentLabel = computed(() => {
 });
 
 const statusClass = computed(() => {
-  if (!props.lastSentAt || (props.daysSinceSent ?? 0) > 14) return "status--red";
-  if ((props.daysSinceSent ?? 0) > 7) return "status--amber";
+  if (!props.lastSentAt || (props.daysSinceSent ?? 0) >= 3) return "status--red";
+  if ((props.daysSinceSent ?? 0) >= 2) return "status--amber";
   return "status--green";
 });
 
 const statusLabel = computed(() => {
   if (!props.lastSentAt) return "هنوز ارسال نشده";
-  if ((props.daysSinceSent ?? 0) > 14) return "دیر شده!";
-  if ((props.daysSinceSent ?? 0) > 7) return "ارسال توصیه می‌شود";
+  if ((props.daysSinceSent ?? 0) >= 3) return "دیر شده!";
+  if ((props.daysSinceSent ?? 0) >= 2) return "ارسال توصیه می‌شود";
   return "به‌روز";
 });
 

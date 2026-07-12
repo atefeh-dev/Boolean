@@ -9,7 +9,7 @@
       </p>
 
       <Transition name="hero-swap-fade" mode="out-in">
-        <div v-if="isSubscribed" key="success" class="hero__success">
+        <div v-if="showSuccess" key="success" class="hero__success">
           <svg class="hero__success-icon" viewBox="0 0 24 24" aria-hidden="true">
             <path
               fill="var(--gold)"
@@ -48,6 +48,9 @@
           </form>
 
           <UiFieldError v-if="displayError" :message="displayError" variant="light" />
+          <p v-else-if="alreadySubscribedNotice" class="hero__note">
+            این ایمیل قبلاً عضو خبرنامه است.
+          </p>
           <p v-else class="hero__note">بدون اسپم. هر روز کاری، یک ایمیل کوتاه.</p>
         </div>
       </Transition>
@@ -57,7 +60,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { useField } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import { subscribeSchema } from "#shared/validation/schemas";
@@ -78,12 +81,26 @@ const emailBlurred = ref(false);
 // cookie) rather than component/page state.
 const status = useState<"idle" | "loading">("newsletter_submit_status", () => "idle");
 const serverError = ref("");
+// True right after a submit that turned out to already be subscribed —
+// only used to pick the note text below the (still-visible) form; it
+// never affects THIS account's own subscribed state (see isOwnEmail below).
+const alreadySubscribedNotice = ref(false);
+// Keeps the form on screen for one extra beat after a "this email is
+// already subscribed" result, even though `isSubscribed` below may have
+// just flipped true (e.g. the guest cookie got set) — otherwise the note
+// would be replaced by the success view before anyone could read it.
+// Clears as soon as they touch the input again.
+const suppressSuccessView = ref(false);
+watch(email, () => {
+  suppressSuccessView.value = false;
+});
 
 const guestSubscribedCookie = useNewsletterGuestCookie();
 
 const isSubscribed = computed(() =>
   isLoggedIn.value ? !!user.value?.subscribed : guestSubscribedCookie.value === "1"
 );
+const showSuccess = computed(() => isSubscribed.value && !suppressSuccessView.value);
 
 // Inline format errors only once the person has actually left the field —
 // not while they're still mid-typing their first character. Server errors
@@ -97,28 +114,43 @@ async function onSubscribe() {
   if (fieldError.value || status.value !== "idle") return;
   status.value = "loading";
   serverError.value = "";
+  alreadySubscribedNotice.value = false;
+
+  // Whether this submission is for the logged-in account's OWN email.
+  // Someone logged in can still subscribe an email that isn't theirs
+  // (e.g. an admin checking a member's status) — that must never flip
+  // *their own* subscribed badge or guest cookie, only reflect the
+  // result for the email they actually typed.
+  const isOwnEmail =
+    isLoggedIn.value && user.value?.email.toLowerCase() === email.value.toLowerCase();
 
   try {
-    // Both a fresh signup and an already-subscribed email land the same
-    // way: the person is a subscriber, so the form stays gone for good
-    // and they see the same friendly confirmation.
-    await $fetch<{ ok: boolean; alreadySubscribed: boolean }>(
+    const res = await $fetch<{ ok: boolean; alreadySubscribed: boolean }>(
       "/api/newsletter/subscribe",
       { method: "POST", body: { email: email.value } }
     );
 
-    if (isLoggedIn.value) {
+    if (isOwnEmail) {
       // Optimistic — the server already linked this subscription to the
       // account, so just reflect it in shared auth state immediately.
-      // Deliberately NOT also setting the guest cookie here: that would
-      // leak this account's subscription into anonymous/guest state for
-      // this browser, so logging out (or a different account logging in
-      // on the same browser later) would incorrectly still show
-      // "subscribed". Once logged out, subscribed status should only
-      // reflect what THIS browser did anonymously.
       markSubscribed();
-    } else {
+    } else if (!isLoggedIn.value) {
+      // Deliberately only set the guest cookie for guests, and only for
+      // their own submission — logging out shouldn't retroactively mark
+      // this browser subscribed, and a logged-in person subscribing a
+      // different email shouldn't mark THIS browser as a subscribed
+      // guest either.
       guestSubscribedCookie.value = "1";
+    }
+
+    if (res.alreadySubscribed && !isOwnEmail) {
+      // Already on the list — say so instead of claiming a "join" that
+      // didn't actually happen, and keep the form visible so the note
+      // is actually readable (see suppressSuccessView above).
+      alreadySubscribedNotice.value = true;
+      suppressSuccessView.value = true;
+      status.value = "idle";
+      return;
     }
 
     email.value = "";
