@@ -7,11 +7,11 @@ export default defineEventHandler(async (event) => {
   const linkIds = body.linkIds ?? [];
 
   if (!Array.isArray(linkIds) || linkIds.length === 0) {
-    throw createError({ statusCode: 400, statusMessage: "حداقل یک لینک را انتخاب کنید." });
+    throw createError({ statusCode: 400, message: "حداقل یک لینک را انتخاب کنید." });
   }
 
   if (linkIds.length > MAX_LINKS) {
-    throw createError({ statusCode: 400, statusMessage: `حداکثر ${MAX_LINKS} لینک در هر شماره خبرنامه مجاز است.` });
+    throw createError({ statusCode: 400, message: `حداکثر ${MAX_LINKS} لینک در هر شماره خبرنامه مجاز است.` });
   }
 
   // Verify all selected links exist, are published, and haven't been notified yet.
@@ -27,13 +27,13 @@ export default defineEventHandler(async (event) => {
   if (links.length !== linkIds.length) {
     throw createError({
       statusCode: 400,
-      statusMessage: "برخی لینک‌های انتخاب‌شده معتبر نیستند یا قبلاً ارسال شده‌اند.",
+      message: "برخی لینک‌های انتخاب‌شده معتبر نیستند یا قبلاً ارسال شده‌اند.",
     });
   }
 
   const subscribers = await prisma.subscriber.findMany({ select: { email: true } });
   if (subscribers.length === 0) {
-    throw createError({ statusCode: 400, statusMessage: "هیچ مشترکی وجود ندارد." });
+    throw createError({ statusCode: 400, message: "هیچ مشترکی وجود ندارد." });
   }
 
   const { html, text } = buildDigestEmail(links);

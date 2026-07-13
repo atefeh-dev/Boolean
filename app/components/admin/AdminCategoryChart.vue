@@ -13,7 +13,7 @@
         <apexchart
           v-if="hasData"
           type="donut"
-          :height="230"
+          :height="245"
           :options="options"
           :series="series"
         />
@@ -21,7 +21,7 @@
           هنوز لینکی برای نمایش وجود ندارد.
         </div>
         <template #fallback>
-          <div class="dash-chart-skeleton" style="height:230px" />
+          <div class="dash-chart-skeleton" style="height:245px" />
         </template>
       </ClientOnly>
     </div>
@@ -66,6 +66,7 @@ const options = computed(() => {
     labels,
     legend: {
       position: "bottom",
+      offsetY: 8,
       fontFamily: "Vazirmatn",
       fontSize: "11px",
       fontWeight: 600,

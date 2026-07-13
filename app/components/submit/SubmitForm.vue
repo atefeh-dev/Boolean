@@ -200,7 +200,7 @@ const onSubmit = handleSubmit(async (values) => {
   } catch (err) {
     const msg =
       err && typeof err === "object" && "data" in err
-        ? (err as { data?: { statusMessage?: string } }).data?.statusMessage
+        ? (err as { data?: { message?: string } }).data?.message
         : undefined;
     serverError.value = msg || "ارسال لینک ناموفق بود.";
   } finally {

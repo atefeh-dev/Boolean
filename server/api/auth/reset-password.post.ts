@@ -11,10 +11,10 @@ export default defineEventHandler(async (event) => {
     select: { userId: true, expiresAt: true, usedAt: true },
   });
 
-  if (!record)          throw createError({ statusCode: 400, statusMessage: "لینک بازیابی نامعتبر است." });
-  if (record.usedAt)    throw createError({ statusCode: 400, statusMessage: "این لینک قبلاً استفاده شده است." });
+  if (!record)          throw createError({ statusCode: 400, message: "لینک بازیابی نامعتبر است." });
+  if (record.usedAt)    throw createError({ statusCode: 400, message: "این لینک قبلاً استفاده شده است." });
   if (record.expiresAt < new Date()) {
-    throw createError({ statusCode: 400, statusMessage: "لینک بازیابی منقضی شده است. دوباره درخواست دهید." });
+    throw createError({ statusCode: 400, message: "لینک بازیابی منقضی شده است. دوباره درخواست دهید." });
   }
 
   const passwordHash = await hashPassword(password);

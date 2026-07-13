@@ -51,9 +51,9 @@
         />
       </div>
 
-      <!-- ⑥ Bottom row: activity + contributors -->
+      <!-- ⑥ Bottom row: recent signups + contributors -->
       <div class="dash-row-charts dash-row-charts--50-50">
-        <AdminActivityPanel      :activity="data.recentActivity" />
+        <AdminSignupsPanel       :subscriptions="data.recentSubscriptions" />
         <AdminContributorsPanel  :contributors="data.topContributors" />
       </div>
     </template>
@@ -87,7 +87,7 @@ interface Analytics {
   categories:              { id: string; label: string; publishedCount: number; lastPublishedDaysAgo: number | null }[]
   topContributors:         { name: string; email: string; submitted: number; approved: number; approvalRate: number }[]
   oldestPending:           { id: string; title: string; url: string; daysAgo: number; submittedBy: string | null; categories: { id: string; label: string }[] }[]
-  recentActivity:          { type: string; title: string; meta: string; at: string }[]
+  recentSubscriptions:     { email: string; hasAccount: boolean; at: string }[]
   subscriberWeeklyTrend:   { label: string; count: number }[]
 }
 

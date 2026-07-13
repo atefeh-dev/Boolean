@@ -12,8 +12,8 @@ interface MeResponse {
 
 function extractErrorMessage(err: unknown, fallback: string) {
   if (err && typeof err === 'object') {
-    const anyErr = err as { data?: { statusMessage?: string }; statusMessage?: string }
-    return anyErr.data?.statusMessage || anyErr.statusMessage || fallback
+    const anyErr = err as { data?: { message?: string }; message?: string }
+    return anyErr.data?.message || anyErr.message || fallback
   }
   return fallback
 }

@@ -200,6 +200,19 @@ const errorMsg   = ref("");
 const sendResult = ref("");
 const preview    = reactive<Preview>({ links: [], subscriberCount: 0, lastSend: null });
 
+// Plain $fetch on the server doesn't carry the incoming request's session
+// cookie (that's a browser behavior — a server-side fetch is a brand new
+// outgoing HTTP request with nothing attached by default). Since
+// loadPreview() runs during SSR (see the top-level await below),
+// requireAdmin on the API side was rejecting it as unauthenticated, SSR
+// rendered the resulting error/empty state, and then the client re-fetched
+// successfully right after mount (browsers attach cookies automatically) —
+// producing a full cascade of hydration mismatches as the real data
+// replaced the error state. useRequestFetch forwards the request context
+// (cookies included) so the SSR pass gets the same authenticated result
+// the client will, and the two renders actually match.
+const fetcher = import.meta.server ? useRequestFetch() : $fetch;
+
 // Selection — ordered Set (insertion order = rank in digest)
 const selectionOrder = ref<string[]>([]);
 const selected = computed(() => new Set(selectionOrder.value));
@@ -244,7 +257,7 @@ function formatDate(iso: string) {
 async function loadPreview() {
   loading.value = true; errorMsg.value = "";
   try {
-    const res = await $fetch<Preview>("/api/admin/newsletter/preview");
+    const res = await fetcher<Preview>("/api/admin/newsletter/preview");
     Object.assign(preview, res);
   } catch (err) {
     errorMsg.value = err instanceof Error ? err.message : "بارگذاری ناموفق بود.";

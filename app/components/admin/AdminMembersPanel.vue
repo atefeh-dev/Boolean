@@ -26,7 +26,7 @@
         <apexchart
           v-if="hasData"
           type="donut"
-          :height="200"
+          :height="215"
           :options="options"
           :series="series"
         />
@@ -34,7 +34,7 @@
           هنوز عضوی ثبت‌نام نکرده است.
         </div>
         <template #fallback>
-          <div class="dash-chart-skeleton" style="height:200px" />
+          <div class="dash-chart-skeleton" style="height:215px" />
         </template>
       </ClientOnly>
     </div>
@@ -65,6 +65,7 @@ const options = computed(() => ({
   labels: ["مشترک خبرنامه", "مشترک نشده"],
   legend: {
     position: "bottom",
+    offsetY: 8,
     fontFamily: "Vazirmatn",
     fontSize: "11px",
     fontWeight: 600,

@@ -6,7 +6,7 @@
 export default defineEventHandler(async (event) => {
   const session = await getVerifiedSessionUser(event);
   if (!session) {
-    throw createError({ statusCode: 401, statusMessage: "ابتدا وارد شوید." });
+    throw createError({ statusCode: 401, message: "ابتدا وارد شوید." });
   }
 
   try {
@@ -18,6 +18,6 @@ export default defineEventHandler(async (event) => {
     return { lastNotificationsReadAt: updated.lastNotificationsReadAt };
   } catch (err) {
     logNotificationsSchemaDrift("couldn't persist lastNotificationsReadAt", err);
-    throw createError({ statusCode: 500, statusMessage: "ثبت وضعیت خوانده‌شده با خطا مواجه شد." });
+    throw createError({ statusCode: 500, message: "ثبت وضعیت خوانده‌شده با خطا مواجه شد." });
   }
 });

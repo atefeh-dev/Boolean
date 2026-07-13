@@ -24,7 +24,7 @@ export default defineEventHandler(
   async (event): Promise<{ notifications: NotificationItem[]; unreadCount: number }> => {
     const session = await getSessionUser(event);
     if (!session) {
-      throw createError({ statusCode: 401, statusMessage: "ابتدا وارد شوید." });
+      throw createError({ statusCode: 401, message: "ابتدا وارد شوید." });
     }
 
     // Read state depends on a column (`lastNotificationsReadAt`) added in a
@@ -116,7 +116,7 @@ export default defineEventHandler(
       logNotificationsSchemaDrift(`failed to load notifications for role=${session.role}`, err);
       throw createError({
         statusCode: 500,
-        statusMessage: "دریافت اعلان‌ها با خطا مواجه شد.",
+        message: "دریافت اعلان‌ها با خطا مواجه شد.",
       });
     }
 

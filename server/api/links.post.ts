@@ -3,7 +3,7 @@ import { submitLinkSchema } from "#shared/validation/schemas";
 export default defineEventHandler(async (event) => {
   const session = await getVerifiedSessionUser(event);
   if (!session) {
-    throw createError({ statusCode: 401, statusMessage: "ابتدا وارد شوید." });
+    throw createError({ statusCode: 401, message: "ابتدا وارد شوید." });
   }
 
   // 20 submissions per hour per user — prevents spam
@@ -21,7 +21,7 @@ export default defineEventHandler(async (event) => {
       where: { id: { in: categoryIds } }, select: { id: true },
     });
     if (found.length !== categoryIds.length) {
-      throw createError({ statusCode: 400, statusMessage: "یکی از دسته‌بندی‌های انتخاب‌شده نامعتبر است." });
+      throw createError({ statusCode: 400, message: "یکی از دسته‌بندی‌های انتخاب‌شده نامعتبر است." });
     }
   }
 

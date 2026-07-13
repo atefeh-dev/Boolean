@@ -51,7 +51,7 @@ export function enforceRateLimit(key: string, max: number, windowMs: number) {
   if (!checkRateLimit(key, max, windowMs)) {
     throw createError({
       statusCode: 429,
-      statusMessage: "تعداد درخواست‌ها بیش از حد مجاز است. لطفاً کمی صبر کنید.",
+      message: "تعداد درخواست‌ها بیش از حد مجاز است. لطفاً کمی صبر کنید.",
     });
   }
 }

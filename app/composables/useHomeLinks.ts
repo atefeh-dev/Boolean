@@ -80,8 +80,19 @@ export async function useHomeLinks() {
       }
     },
     {
-      // Always re-fetch — never serve the stale SSR payload on subsequent navigations.
-      getCachedData: () => undefined,
+      // Reuse the SSR payload for the initial hydration (so the client's
+      // first render matches the server exactly, per Vue's hydration
+      // contract), but bypass the cache for every subsequent navigation
+      // so approving new links doesn't require a hard refresh to show up.
+      // Returning undefined unconditionally (even during hydration) was
+      // causing a hydration mismatch: the client would kick off its own
+      // independent re-fetch before Vue finished reconciling against the
+      // server-rendered HTML, and if that re-fetch resolved with even
+      // slightly different data (a link published a moment later, a
+      // transient failure falling back to the static demo data, etc.),
+      // the client's first render no longer matched what the server sent.
+      getCachedData: (key, nuxtApp) =>
+        nuxtApp.isHydrating ? nuxtApp.payload.data[key] : undefined,
     }
   );
 

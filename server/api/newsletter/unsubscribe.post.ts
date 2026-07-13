@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
 
   const session = await getVerifiedSessionUser(event);
   if (!session) {
-    throw createError({ statusCode: 401, statusMessage: "لطفاً ابتدا وارد حساب کاربری خود شوید." });
+    throw createError({ statusCode: 401, message: "لطفاً ابتدا وارد حساب کاربری خود شوید." });
   }
 
   try {
@@ -16,7 +16,7 @@ export default defineEventHandler(async (event) => {
     await prisma.subscriber.deleteMany({ where: { userId: session.sub } });
   } catch (err) {
     console.error(`[newsletter] unsubscribe failed — ${diagnosePrismaSchemaDrift(err)}`, err);
-    throw createError({ statusCode: 500, statusMessage: "مشکلی پیش آمد. دوباره تلاش کنید." });
+    throw createError({ statusCode: 500, message: "مشکلی پیش آمد. دوباره تلاش کنید." });
   }
 
   return { ok: true };

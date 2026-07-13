@@ -13,17 +13,17 @@ export default defineEventHandler(async (event) => {
 
   const id = getRouterParam(event, "id");
   if (!id) {
-    throw createError({ statusCode: 400, statusMessage: "شناسه لینک الزامی است." });
+    throw createError({ statusCode: 400, message: "شناسه لینک الزامی است." });
   }
 
   const body = await readBody<PatchBody>(event);
   if (!["approve", "reject", "save"].includes(body.action ?? "")) {
-    throw createError({ statusCode: 400, statusMessage: "عملیات نامعتبر است." });
+    throw createError({ statusCode: 400, message: "عملیات نامعتبر است." });
   }
 
   const existing = await prisma.link.findUnique({ where: { id } });
   if (!existing) {
-    throw createError({ statusCode: 404, statusMessage: "لینک پیدا نشد." });
+    throw createError({ statusCode: 404, message: "لینک پیدا نشد." });
   }
 
   // ── Approve / Reject — only touch status fields, nothing else ──────────
@@ -44,7 +44,7 @@ export default defineEventHandler(async (event) => {
 
   const title = edits.title?.trim();
   if (edits.title !== undefined && !title) {
-    throw createError({ statusCode: 400, statusMessage: "عنوان نمی‌تواند خالی باشد." });
+    throw createError({ statusCode: 400, message: "عنوان نمی‌تواند خالی باشد." });
   }
 
   // Bug #3 fix: [] is truthy in JS, so we must check .length > 0 before
@@ -60,7 +60,7 @@ export default defineEventHandler(async (event) => {
     if (found.length !== categoryIds.length) {
       throw createError({
         statusCode: 400,
-        statusMessage: "یکی از دسته‌بندی‌های انتخاب‌شده نامعتبر است.",
+        message: "یکی از دسته‌بندی‌های انتخاب‌شده نامعتبر است.",
       });
     }
     categoryUpdate = { set: categoryIds.map((cid) => ({ id: cid })) };

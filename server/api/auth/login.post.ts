@@ -15,7 +15,7 @@ export default defineEventHandler(async (event) => {
     : (await verifyPassword(password, dummyHash), false);
 
   if (!user || !valid) {
-    throw createError({ statusCode: 401, statusMessage: "ایمیل یا رمز عبور اشتباه است." });
+    throw createError({ statusCode: 401, message: "ایمیل یا رمز عبور اشتباه است." });
   }
 
   await createSessionCookie(event, {

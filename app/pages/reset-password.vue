@@ -106,7 +106,7 @@ const onSubmit = handleSubmit(async (values) => {
     done.value = true
   } catch (err) {
     const msg = err && typeof err === "object" && "data" in err
-      ? (err as { data?: { statusMessage?: string } }).data?.statusMessage
+      ? (err as { data?: { message?: string } }).data?.message
       : undefined
     errorMsg.value = msg || "خطایی رخ داد."
   } finally {

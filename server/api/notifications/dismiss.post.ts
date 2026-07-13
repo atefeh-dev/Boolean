@@ -10,13 +10,13 @@
 export default defineEventHandler(async (event) => {
   const session = await getVerifiedSessionUser(event);
   if (!session) {
-    throw createError({ statusCode: 401, statusMessage: "ابتدا وارد شوید." });
+    throw createError({ statusCode: 401, message: "ابتدا وارد شوید." });
   }
 
   const body = await readBody<{ id?: string }>(event).catch(() => null);
   const notificationId = body?.id?.trim();
   if (!notificationId) {
-    throw createError({ statusCode: 400, statusMessage: "شناسه اعلان الزامی است." });
+    throw createError({ statusCode: 400, message: "شناسه اعلان الزامی است." });
   }
 
   try {
@@ -29,6 +29,6 @@ export default defineEventHandler(async (event) => {
     return { ok: true };
   } catch (err) {
     logNotificationsSchemaDrift("couldn't persist dismissal", err);
-    throw createError({ statusCode: 500, statusMessage: "حذف اعلان با خطا مواجه شد." });
+    throw createError({ statusCode: 500, message: "حذف اعلان با خطا مواجه شد." });
   }
 });

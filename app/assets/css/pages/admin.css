@@ -69,6 +69,16 @@
   padding: 0;
 }
 
+/* While a tab switch is refreshing the list, keep the previous content
+   visible (just dimmed) instead of unmounting it — swapping the whole
+   list for a one-line loading message collapses the page's height and
+   makes the viewport jump if you were scrolled past the top. */
+.admin-list--loading {
+  opacity: 0.45;
+  pointer-events: none;
+  transition: opacity 0.15s var(--ease);
+}
+
 .admin-card {
   display: flex;
   justify-content: space-between;
@@ -293,57 +303,66 @@
   font-size: 0.875rem;
 }
 
-/* ── Subscribers table ── */
-.admin-sub-stats {
-  display: flex;
-  gap: 16px;
-  margin-bottom: 24px;
+/* ── Search field (admin pages) ── */
+.admin-search {
+  position: relative;
+  margin-bottom: 20px;
 }
-
-.admin-sub-stat {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  padding: 20px 32px;
+.admin-search__icon {
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  color: var(--ink-faint);
+  pointer-events: none;
+}
+.admin-search__input {
+  width: 100%;
+  padding: 12px 46px 12px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
   background: var(--surface);
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(28, 31, 28,0.05);
-  text-align: center;
+  font-family: inherit;
+  font-size: 0.9375rem;
+  color: var(--ink);
+  transition: border-color 0.15s var(--ease), box-shadow 0.15s var(--ease);
 }
-
-.admin-sub-stat--secondary { opacity: 0.7; }
-
-.admin-sub-stat__num {
-  font-size: 2rem;
-  font-weight: 800;
-  color: var(--forest);
-  line-height: 1;
+.admin-search__input::placeholder { color: var(--ink-faint); }
+.admin-search__input:focus {
+  outline: none;
+  border-color: var(--forest);
+  box-shadow: 0 0 0 3px rgba(36,72,61,0.1);
 }
+/* Suppress the native browser search-cancel affordance so it doesn't
+   fight with our own icon/spacing across browsers. */
+.admin-search__input::-webkit-search-cancel-button { -webkit-appearance: none; }
 
-.admin-sub-stat__label {
-  font-size: 0.8125rem;
-  color: var(--ink-soft);
-  margin-top: 4px;
-}
-
-.admin-sub-table {
+/* ── Members / contacts table (shared by /admin/members and
+   /admin/subscribers) ── */
+.admin-members-table {
   background: var(--surface);
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 4px 16px rgba(28, 31, 28,0.06);
 }
 
-.admin-sub-table__head,
-.admin-sub-table__row {
+.admin-members-table__head,
+.admin-members-table__row {
   display: grid;
-  grid-template-columns: 48px 1fr 160px 48px;
+  grid-template-columns: 40px minmax(0, 0.9fr) minmax(0, 1.3fr) 140px 110px;
   align-items: center;
   padding: 12px 20px;
-  gap: 12px;
+  gap: 20px;
+}
+/* Subscribers page adds a trailing per-row action button. */
+.admin-members-table--with-actions .admin-members-table__head,
+.admin-members-table--with-actions .admin-members-table__row {
+  grid-template-columns: 40px minmax(0, 0.9fr) minmax(0, 1.3fr) 140px 110px 48px;
 }
 
-.admin-sub-table__head {
+.admin-members-table__head {
   font-size: 0.8125rem;
   font-weight: 700;
   color: var(--ink-faint);
@@ -351,26 +370,125 @@
   border-bottom: 1px solid var(--line);
 }
 
-.admin-sub-table__row {
+.admin-members-table__row {
   border-bottom: 1px solid var(--line);
   transition: background 0.1s var(--ease);
 }
-.admin-sub-table__row:last-child { border-bottom: none; }
-.admin-sub-table__row:hover { background: rgba(36,72,61,0.07); }
+.admin-members-table__row:last-child { border-bottom: none; }
+.admin-members-table__row:hover { background: rgba(36,72,61,0.07); }
 
-.admin-sub-table__index {
+.admin-members-table__index {
   font-size: 0.8125rem;
   color: var(--ink-faint);
   font-weight: 600;
 }
-
-.admin-sub-table__email {
+.admin-members-table__name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
   font-size: 0.9375rem;
   color: var(--ink);
   font-weight: 500;
 }
+.admin-members-table__name-text {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+.admin-members-table__email {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 0.9375rem;
+  color: var(--ink-soft);
+  /* This span has dir="ltr" (so the email text itself reads left-to-right
+     instead of getting visually jumbled by RTL bidi rules). That makes
+     `text-align: start` resolve to LEFT for this element specifically,
+     even though the page and every other column are RTL — so it needs an
+     explicit `right` here to actually line up under its (right-aligned,
+     RTL-inherited) header, matching every other column in the table. */
+  text-align: right;
+}
+.admin-members-table__date {
+  font-size: 0.8125rem;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+.admin-members-table__action-empty {
+  width: 1px;
+  height: 1px;
+}
 
-.admin-sub-table__date {
+.admin-role-badge {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 2px 9px;
+  background: rgba(176, 141, 70,0.15);
+  color: #7a5f1e;
+  flex-shrink: 0;
+}
+.admin-role-badge--guest {
+  background: rgba(28, 31, 28,0.07);
+  color: var(--ink-faint);
+}
+
+.admin-sub-badge {
+  justify-self: start;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 3px 12px;
+}
+.admin-sub-badge--yes {
+  background: rgba(36,72,61,0.1);
+  color: var(--forest);
+}
+.admin-sub-badge--no {
+  background: var(--clay-soft);
+  color: var(--clay);
+}
+
+@media (max-width: 640px) {
+  .admin-members-table__head,
+  .admin-members-table__row {
+    grid-template-columns: 32px minmax(0, 1fr) 90px;
+  }
+  .admin-members-table--with-actions .admin-members-table__head,
+  .admin-members-table--with-actions .admin-members-table__row {
+    grid-template-columns: 32px minmax(0, 1fr) 90px 40px;
+  }
+  .admin-members-table__email,
+  .admin-members-table__date {
+    display: none;
+  }
+}
+
+/* ── Subscribers table footer (summary + pagination, docked to the
+   table card rather than a separate block) ── */
+.admin-table-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 14px 20px;
+  background: rgba(36,72,61,0.04);
+  border-top: 1px solid var(--line);
+}
+
+.admin-table-footer__summary {
+  font-size: 0.8125rem;
+  color: var(--ink-soft);
+}
+
+.admin-table-footer__pagination {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   font-size: 0.8125rem;
   color: var(--ink-soft);
 }
@@ -826,16 +944,7 @@
 .dash-feed-item { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
 .dash-feed-item:last-child { border-bottom: none; }
 
-.dash-feed-item__icon {
-  width: 30px; height: 30px; border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0; margin-top: 1px;
-}
-.dash-feed-item__icon svg { width: 14px; height: 14px; }
-
-.dash-feed-item__icon.type--published { background: rgba(36,72,61,0.1); color: var(--forest); }
-.dash-feed-item__icon.type--subscribed { background: rgba(176, 141, 70,0.12); color: var(--gold); }
-.dash-feed-item__icon.type--submitted  { background: var(--surface-sunken); color: var(--ink-soft); }
+.dash-feed-item__body { flex: 1; min-width: 0; }
 
 .dash-feed-item__title { font-size: 0.875rem; font-weight: 600; color: var(--ink); line-height: 1.4;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -1152,6 +1261,7 @@
 .dash-chart-badge {
   font-size: 0.75rem;
   font-weight: 700;
+  flex-shrink: 0;
   padding: 3px 10px;
   border-radius: 999px;
   background: var(--surface-sunken);

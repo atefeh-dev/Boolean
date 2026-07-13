@@ -159,7 +159,7 @@ async function onSubscribe() {
   } catch (err) {
     const msg =
       err && typeof err === "object" && "data" in err
-        ? (err as { data?: { statusMessage?: string } }).data?.statusMessage
+        ? (err as { data?: { message?: string } }).data?.message
         : undefined;
     serverError.value = msg || "مشکلی پیش آمد. دوباره تلاش کنید.";
     status.value = "idle";

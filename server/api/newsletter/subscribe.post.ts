@@ -67,7 +67,7 @@ export default defineEventHandler(async (event) => {
     }
   } catch (err) {
     console.error(`[newsletter] subscribe failed — ${diagnosePrismaSchemaDrift(err)}`, err);
-    throw createError({ statusCode: 500, statusMessage: "مشکلی پیش آمد. دوباره تلاش کنید." });
+    throw createError({ statusCode: 500, message: "مشکلی پیش آمد. دوباره تلاش کنید." });
   }
 
   if (alreadySubscribed) {

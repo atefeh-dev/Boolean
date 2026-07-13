@@ -22,12 +22,12 @@
 
     <p v-if="errorMsg" class="admin-error">{{ errorMsg }}</p>
 
-    <div v-if="loading" class="admin-empty">در حال بارگذاری...</div>
-    <div v-else-if="!links.length" class="admin-empty">
+    <div v-if="loading && !links.length" class="admin-empty">در حال بارگذاری...</div>
+    <div v-else-if="!loading && !links.length" class="admin-empty">
       لینکی در این وضعیت وجود ندارد.
     </div>
 
-    <ul v-else class="admin-list">
+    <ul v-if="links.length" class="admin-list" :class="{ 'admin-list--loading': loading }">
       <li v-for="link in links" :key="link.id" class="admin-card">
 
         <!-- Edit mode -->

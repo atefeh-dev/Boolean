@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
   const validStatuses = ["PENDING", "PUBLISHED", "REJECTED"];
 
   if (!validStatuses.includes(status)) {
-    throw createError({ statusCode: 400, statusMessage: "وضعیت نامعتبر است." });
+    throw createError({ statusCode: 400, message: "وضعیت نامعتبر است." });
   }
 
   const take = Math.min(Math.max(Number(query.take) || 20, 1), 100);

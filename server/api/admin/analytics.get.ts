@@ -45,11 +45,11 @@ export default defineEventHandler(async (event) => {
       },
     }),
 
-    // All subscribers in last 8 weeks (for trend + activity)
+    // All subscribers in last 8 weeks (for trend + recent subscribers list)
     prisma.subscriber.findMany({
       where: { createdAt: { gte: eightWeeksAgo } },
       orderBy: { createdAt: "desc" },
-      select: { email: true, createdAt: true },
+      select: { email: true, createdAt: true, userId: true },
     }),
 
     prisma.newsletterSend.findFirst({ orderBy: { sentAt: "desc" } }),
@@ -145,32 +145,16 @@ export default defineEventHandler(async (event) => {
   const publishedThisWeek = recentPublished.filter(l => l.publishedAt && l.publishedAt >= weekAgo).length;
   const publishedLastWeek = recentPublished.filter(l => l.publishedAt && l.publishedAt >= twoWeekAgo && l.publishedAt < weekAgo).length;
 
-  // ── Derived: recent activity feed ───────────────────────────────────────
-  // Take up to 10 from EACH source before merging — not an arbitrary
-  // smaller split like 6/4. Taking N from each of two sources and merging
-  // is the only way to guarantee the true top-N of the combined list is
-  // present; a smaller per-type cap can silently drop genuinely-recent
-  // items of whichever type happens to be more active that day.
-  const activityPublished = recentPublished.slice(0, 10).map(l => ({
-    type: "published" as const,
-    title: l.title,
-    meta: l.categories.map(c => c.label).join("، ") || "—",
-    at: l.publishedAt?.toISOString() ?? now.toISOString(),
-  }));
-  const activitySubscribed = recentSubscribers.slice(0, 10).map(s => ({
-    type: "subscribed" as const,
-    // Mask the local part, keeping only the first 3 characters — but for
-    // short local parts (e.g. "ab@x.com"), a lookbehind requiring 3
-    // characters never matches at all, leaving the email fully unmasked.
-    // Cap the "kept" prefix at the local part's own length so it degrades
-    // to masking everything rather than masking nothing.
-    title: s.email.replace(/^(.{0,3})(.+)(?=@)/, (_m, keep: string, rest: string) => keep + "*".repeat(rest.length)),
-    meta: "مشترک جدید",
+  // ── Derived: recent subscribers ─────────────────────────────────────────
+  const recentSubscriptions = recentSubscribers.slice(0, 10).map(s => ({
+    // Mask the local part, keeping only the first 3 characters — capped at
+    // the local part's own length so short addresses (e.g. "ab@x.com")
+    // degrade to masking everything rather than a lookbehind silently
+    // failing to match and leaving the email fully unmasked.
+    email: s.email.replace(/^(.{0,3})(.+)(?=@)/, (_m, keep: string, rest: string) => keep + "*".repeat(rest.length)),
+    hasAccount: !!s.userId,
     at: s.createdAt.toISOString(),
   }));
-  const recentActivity = [...activityPublished, ...activitySubscribed]
-    .sort((a, b) => new Date(b.at).getTime() - new Date(a.at).getTime())
-    .slice(0, 10);
 
   // ── Derived: action items ────────────────────────────────────────────────
   // Count pending links older than 3 days (need attention)
@@ -292,7 +276,7 @@ export default defineEventHandler(async (event) => {
     categories,
     topContributors,
     oldestPending,
-    recentActivity,
+    recentSubscriptions,
     actionItems,
     subscriberWeeklyTrend,
   };
