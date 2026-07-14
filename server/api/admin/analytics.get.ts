@@ -6,19 +6,30 @@ export default defineEventHandler(async (event) => {
   await requireAdmin(event);
 
   const now = new Date();
-  const weekAgo    = new Date(now.getTime() - 7  * 86_400_000);
-  const twoWeekAgo = new Date(now.getTime() - 14 * 86_400_000);
+  const weekAgo       = new Date(now.getTime() - 7  * 86_400_000);
+  const twoWeekAgo    = new Date(now.getTime() - 14 * 86_400_000);
+  const threeDaysAgo  = new Date(now.getTime() - 3  * 86_400_000);
+  const sevenDaysAgo  = new Date(now.getTime() - 7  * 86_400_000);
   const eightWeeksAgo = new Date(now.getTime() - 56 * 86_400_000);
+  const todayStart    = new Date(now);
+  todayStart.setHours(0, 0, 0, 0);
 
-  // ── All queries fire in parallel ────────────────────────────────────────
+  // ── All queries fire in parallel. None of these scale with all-time
+  // history anymore — each is either a bounded count/aggregate pushed into
+  // Postgres, or a time-windowed / take-limited fetch. (Previously three of
+  // these were unbounded findMany, reduced by hand in JS — see the perf
+  // review for why that doesn't scale.) ──────────────────────────────────
   const [
     publishedCount, pendingCount, rejectedCount,
     subscriberCount, categoryCount, userCount,
-    recentPublished, allPending,
+    recentPublished,
+    oldestPending5, oldPendingCount, veryOldCount,
     recentSubscribers, lastNewsletter, newsletterReadyCount,
-    newSubsThisWeek, newSubsLastWeek,
-    allCategories, publishedWithCats,
-    userSubmissions, notSubscribedCount,
+    newSubsThisWeek, newSubsLastWeek, newSubsToday,
+    categoriesWithCounts,
+    totalUserSubmitted, totalApproved, totalRejected,
+    topContributorGroups,
+    notSubscribedCount,
   ] = await Promise.all([
     prisma.link.count({ where: { status: "PUBLISHED" } }),
     prisma.link.count({ where: { status: "PENDING" } }),
@@ -34,16 +45,22 @@ export default defineEventHandler(async (event) => {
       select: { id: true, title: true, url: true, publishedAt: true, categories: { select: { id: true, label: true } } },
     }),
 
-    // All pending ordered oldest-first — for queue health
+    // Only the 5 oldest pending links are ever shown — no reason to fetch
+    // the whole queue to get them.
     prisma.link.findMany({
       where: { status: "PENDING" },
       orderBy: { createdAt: "asc" },
+      take: 5,
       select: {
         id: true, title: true, url: true, createdAt: true,
         categories: { select: { id: true, label: true } },
         submittedBy: { select: { name: true } },
       },
     }),
+    // Queue-age counts computed in the DB instead of filtering a full
+    // in-memory list of every pending link.
+    prisma.link.count({ where: { status: "PENDING", createdAt: { lt: threeDaysAgo } } }),
+    prisma.link.count({ where: { status: "PENDING", createdAt: { lt: sevenDaysAgo } } }),
 
     // All subscribers in last 8 weeks (for trend + recent subscribers list)
     prisma.subscriber.findMany({
@@ -56,23 +73,59 @@ export default defineEventHandler(async (event) => {
     prisma.link.count({ where: { status: "PUBLISHED", notifiedAt: null } }),
     prisma.subscriber.count({ where: { createdAt: { gte: weekAgo } } }),
     prisma.subscriber.count({ where: { createdAt: { gte: twoWeekAgo, lt: weekAgo } } }),
-    prisma.category.findMany({ select: { id: true, label: true } }),
+    prisma.subscriber.count({ where: { createdAt: { gte: todayStart } } }),
 
-    // Published links with categories — for category distribution
-    prisma.link.findMany({
-      where: { status: "PUBLISHED" },
-      select: { categories: { select: { id: true } }, publishedAt: true },
+    // Category distribution, computed by Postgres (count + most-recent
+    // publish date per category) instead of pulling every published link's
+    // categories into Node to tally by hand.
+    prisma.category.findMany({
+      select: {
+        id: true,
+        label: true,
+        _count: { select: { links: { where: { status: "PUBLISHED" } } } },
+        links: {
+          where: { status: "PUBLISHED" },
+          orderBy: { publishedAt: "desc" },
+          take: 1,
+          select: { publishedAt: true },
+        },
+      },
     }),
 
-    // User-submitted links — for funnel + top contributors
-    prisma.link.findMany({
+    // Approval funnel — three bounded counts instead of fetching every
+    // user-submitted link ever to count them in JS.
+    prisma.link.count({ where: { submittedById: { not: null } } }),
+    prisma.link.count({ where: { submittedById: { not: null }, status: "PUBLISHED" } }),
+    prisma.link.count({ where: { submittedById: { not: null }, status: "REJECTED" } }),
+
+    // Top 5 contributors by submission count, computed in the DB.
+    prisma.link.groupBy({
+      by: ["submittedById"],
       where: { submittedById: { not: null } },
-      select: { id: true, status: true, submittedById: true, submittedBy: { select: { name: true, email: true } } },
+      _count: { submittedById: true },
+      orderBy: { _count: { submittedById: "desc" } },
+      take: 5,
     }),
 
     // Registered accounts that never subscribed to the newsletter
     prisma.user.count({ where: { subscriber: null } }),
   ]);
+
+  // Per-status breakdown + names for just the top 5 contributors — a
+  // second small, bounded round trip rather than folding this into the
+  // query above (groupBy can't mix "top N by count" with a full status
+  // breakdown in a single pass).
+  const topIds = topContributorGroups.map((g) => g.submittedById).filter((id): id is string => !!id);
+  const [contributorStatusBreakdown, contributorUsers] = topIds.length
+    ? await Promise.all([
+        prisma.link.groupBy({
+          by: ["submittedById", "status"],
+          where: { submittedById: { in: topIds } },
+          _count: { _all: true },
+        }),
+        prisma.user.findMany({ where: { id: { in: topIds } }, select: { id: true, name: true, email: true } }),
+      ])
+    : [[], []];
 
   // ── Derived: subscriber weekly trend ────────────────────────────────────
   const subscriberWeeklyTrend = Array.from({ length: 8 }, (_, i) => {
@@ -86,46 +139,44 @@ export default defineEventHandler(async (event) => {
   });
 
   // ── Derived: category distribution ──────────────────────────────────────
-  const catMap = new Map<string, { label: string; published: number; lastAt: Date | null }>();
-  for (const c of allCategories) catMap.set(c.id, { label: c.label, published: 0, lastAt: null });
-  for (const link of publishedWithCats) {
-    for (const cat of link.categories) {
-      const entry = catMap.get(cat.id);
-      if (!entry) continue;
-      entry.published++;
-      if (!entry.lastAt || (link.publishedAt && link.publishedAt > entry.lastAt)) {
-        entry.lastAt = link.publishedAt;
-      }
-    }
-  }
-  const categories = Array.from(catMap.entries())
-    .map(([id, v]) => ({
-      id,
-      label: v.label,
-      publishedCount: v.published,
-      lastPublishedDaysAgo: v.lastAt ? daysBetween(v.lastAt, now) : null,
+  const categories = categoriesWithCounts
+    .map((c) => ({
+      id: c.id,
+      label: c.label,
+      publishedCount: c._count.links,
+      lastPublishedDaysAgo: c.links[0]?.publishedAt ? daysBetween(c.links[0].publishedAt, now) : null,
     }))
     .sort((a, b) => b.publishedCount - a.publishedCount);
 
   // ── Derived: top contributors ────────────────────────────────────────────
-  const contribMap = new Map<string, { name: string; email: string; submitted: number; approved: number; rejected: number }>();
-  for (const link of userSubmissions) {
-    if (!link.submittedById || !link.submittedBy) continue;
-    if (!contribMap.has(link.submittedById)) {
-      contribMap.set(link.submittedById, { name: link.submittedBy.name, email: link.submittedBy.email, submitted: 0, approved: 0, rejected: 0 });
-    }
-    const c = contribMap.get(link.submittedById)!;
-    c.submitted++;
-    if (link.status === "PUBLISHED") c.approved++;
-    if (link.status === "REJECTED")  c.rejected++;
+  const userById = new Map(contributorUsers.map((u) => [u.id, u]));
+  const submittedById = new Map(topContributorGroups.map((g) => [g.submittedById!, g._count.submittedById]));
+  const approvedById = new Map<string, number>();
+  const rejectedById = new Map<string, number>();
+  for (const row of contributorStatusBreakdown) {
+    if (!row.submittedById) continue;
+    if (row.status === "PUBLISHED") approvedById.set(row.submittedById, row._count._all);
+    if (row.status === "REJECTED")  rejectedById.set(row.submittedById, row._count._all);
   }
-  const topContributors = [...contribMap.values()]
-    .sort((a, b) => b.submitted - a.submitted)
-    .slice(0, 5)
-    .map(c => ({ ...c, approvalRate: c.submitted > 0 ? Math.round((c.approved / c.submitted) * 100) : 0 }));
+  // topIds is already ordered by submission count desc (from the groupBy
+  // orderBy+take above), so this preserves that order.
+  const topContributors = topIds.map((id) => {
+    const user = userById.get(id);
+    const submitted = submittedById.get(id) ?? 0;
+    const approved = approvedById.get(id) ?? 0;
+    const rejected = rejectedById.get(id) ?? 0;
+    return {
+      name: user?.name ?? "—",
+      email: user?.email ?? "",
+      submitted,
+      approved,
+      rejected,
+      approvalRate: submitted > 0 ? Math.round((approved / submitted) * 100) : 0,
+    };
+  });
 
   // ── Derived: oldest pending ──────────────────────────────────────────────
-  const oldestPending = allPending.slice(0, 5).map(l => ({
+  const oldestPending = oldestPending5.map(l => ({
     id: l.id,
     title: l.title,
     url: l.url,
@@ -135,9 +186,6 @@ export default defineEventHandler(async (event) => {
   }));
 
   // ── Derived: approval funnel ─────────────────────────────────────────────
-  const totalUserSubmitted = userSubmissions.length;
-  const totalApproved = userSubmissions.filter(l => l.status === "PUBLISHED").length;
-  const totalRejected = userSubmissions.filter(l => l.status === "REJECTED").length;
   const approvalRate = totalUserSubmitted > 0
     ? Math.round((totalApproved / totalUserSubmitted) * 100) : 0;
 
@@ -157,14 +205,6 @@ export default defineEventHandler(async (event) => {
   }));
 
   // ── Derived: action items ────────────────────────────────────────────────
-  // Count pending links older than 3 days (need attention)
-  const oldPendingCount = allPending.filter(l => daysBetween(new Date(l.createdAt), now) >= 3).length;
-
-  // New subscribers in last 24 hours
-  const todayStart = new Date(now);
-  todayStart.setHours(0, 0, 0, 0);
-  const newSubsToday = await prisma.subscriber.count({ where: { createdAt: { gte: todayStart } } });
-
   // Days since last newsletter (null = never sent)
   const daysSinceSent = lastNewsletter ? daysBetween(new Date(lastNewsletter.sentAt), now) : null;
 
@@ -180,7 +220,6 @@ export default defineEventHandler(async (event) => {
   const actionItems: ActionItem[] = [];
 
   // 🔴 Urgent: very old pending links (>7 days)
-  const veryOldCount = allPending.filter(l => daysBetween(new Date(l.createdAt), now) > 7).length;
   if (veryOldCount > 0) {
     actionItems.push({
       level: "urgent",

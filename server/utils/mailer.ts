@@ -1,6 +1,10 @@
 import nodemailer from "nodemailer";
 
-let cachedTransporter: ReturnType<typeof nodemailer.createTransport> | null = null;
+// Typed as the generic Transporter (not `ReturnType<typeof createTransport>`,
+// which resolves against a specific overload) since createTransport's actual
+// return type here depends on the `pool: true` option below — pinning the
+// variable to the generic type keeps that assignment valid either way.
+let cachedTransporter: nodemailer.Transporter | null = null;
 
 /**
  * One SMTP transporter, configured purely from env vars — so swapping from
@@ -26,12 +30,29 @@ function getTransporter() {
     port,
     secure: port === 465,
     auth: { user, pass },
+    // Reuse a small pool of connections instead of opening a fresh one per
+    // message. Barely matters for one-off transactional emails (welcome,
+    // reset), but the newsletter send loops over every subscriber — without
+    // pooling that's one TCP+TLS+auth handshake per recipient, which is
+    // slow and the kind of pattern SMTP providers rate-limit or flag.
+    pool: true,
+    maxConnections: 5,
+    maxMessages: 100,
   });
 
   return cachedTransporter;
 }
 
-export async function sendMail(opts: { to: string; subject: string; html: string; text: string }) {
+export async function sendMail(opts: {
+  to: string;
+  subject: string;
+  html: string;
+  text: string;
+  // Extra raw headers — e.g. List-Unsubscribe / List-Unsubscribe-Post for
+  // the newsletter, so mailbox providers can show their native "Unsubscribe"
+  // affordance instead of relying solely on a link in the body.
+  headers?: Record<string, string>;
+}) {
   const transporter = getTransporter();
   const from = process.env.SMTP_FROM || '"سایدبار" <hello@sidebar.fa>';
 
@@ -41,6 +62,7 @@ export async function sendMail(opts: { to: string; subject: string; html: string
     subject: opts.subject,
     html: opts.html,
     text: opts.text,
+    headers: opts.headers,
   });
 
   // Ethereal gives back a preview URL instead of actually delivering —

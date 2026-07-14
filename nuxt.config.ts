@@ -26,19 +26,26 @@ export default defineNuxtConfig({
     head: {
       htmlAttrs: { lang: "fa", dir: "rtl" },
       link: [
-        { rel: "preconnect", href: "https://fonts.googleapis.com" },
-        { rel: "preconnect", href: "https://fonts.gstatic.com", crossorigin: "" },
-        {
-          rel: "stylesheet",
-          href: "https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=Newsreader:ital@1&display=swap",
-        },
         { rel: "icon", type: "image/svg+xml", href: "/icon.svg" },
         { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
       ],
     },
   },
 
-  css: ["~/assets/css/main.css"],
+  // Vazirmatn/Newsreader used to load from fonts.googleapis.com — two
+  // third-party origins (CSS host + font-file host) in the critical
+  // rendering path on every single page view. Self-hosted via @fontsource
+  // instead: no external DNS/connection, no extra round trip, and the
+  // exact weights actually used ship as part of the normal build.
+  css: [
+    "@fontsource/vazirmatn/400.css",
+    "@fontsource/vazirmatn/500.css",
+    "@fontsource/vazirmatn/600.css",
+    "@fontsource/vazirmatn/700.css",
+    "@fontsource/vazirmatn/800.css",
+    "@fontsource/newsreader/400-italic.css",
+    "~/assets/css/main.css",
+  ],
 
   nitro: {
     routeRules: {
@@ -57,13 +64,23 @@ export default defineNuxtConfig({
           "X-XSS-Protection": "1; mode=block",
         },
       },
-      // API routes: no caching, no embedding
+      // API routes: no caching, no embedding, by default...
       "/api/**": {
         headers: {
           "Cache-Control": "no-store",
           "X-Content-Type-Options": "nosniff",
         },
       },
+      // ...except these two: public, unauthenticated, identical for every
+      // visitor, and hit on every page load (home, archive, category
+      // pages). `swr` serves a cached response immediately and revalidates
+      // in the background, so most requests never touch Postgres at all —
+      // safe for content that changes a handful of times a day, not on
+      // every request. More specific paths win over the `/api/**` rule
+      // above, so this correctly overrides the no-store default just for
+      // these two routes.
+      "/api/links": { swr: 300 },
+      "/api/categories": { swr: 3600 },
     },
   },
 });

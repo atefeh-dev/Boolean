@@ -4,7 +4,7 @@ interface DigestLink {
   body: string | null;
 }
 
-export function buildDigestEmail(links: DigestLink[]) {
+export function buildDigestEmail(links: DigestLink[], unsubscribeUrl: string) {
   const itemsHtml = links
     .map(
       (l) => `
@@ -23,13 +23,15 @@ export function buildDigestEmail(links: DigestLink[]) {
     <h2 style="color: #24483d;">سایدبار — لینک‌های این هفته</h2>
     <table style="width: 100%; border-collapse: collapse;">${itemsHtml}</table>
     <p style="margin-top: 24px; font-size: 12px; color: #958878;">
-      این ایمیل برای شما ارسال شده چون در خبرنامه سایدبار عضو هستید.
+      این ایمیل برای شما ارسال شده چون در خبرنامه سایدبار عضو هستید. —
+      <a href="${unsubscribeUrl}" style="color: #958878; text-decoration: underline;">لغو عضویت</a>
     </p>
   </div>`;
 
   const text =
     "سایدبار — لینک‌های این هفته\n\n" +
-    links.map((l) => `${l.title}\n${l.url}`).join("\n\n");
+    links.map((l) => `${l.title}\n${l.url}`).join("\n\n") +
+    `\n\n---\nلغو عضویت: ${unsubscribeUrl}`;
 
   return { html, text };
 }

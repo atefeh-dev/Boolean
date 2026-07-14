@@ -39,6 +39,11 @@ export const subscribeSchema = z.object({
   email: emailSchema,
 });
 
+// Used by the no-login unsubscribe path (link in the newsletter email).
+export const unsubscribeTokenSchema = z.object({
+  token: z.string().min(1, "توکن نامعتبر است."),
+});
+
 // ---- Auth -----------------------------------------------------------------
 
 export const loginSchema = z.object({
@@ -114,6 +119,7 @@ export const submitLinkSchema = z.object({
 });
 
 export type SubscribeInput = z.infer<typeof subscribeSchema>;
+export type UnsubscribeTokenInput = z.infer<typeof unsubscribeTokenSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;

@@ -38,6 +38,7 @@
 </template>
 
 <script setup lang="ts">
+import apexchart from "vue3-apexcharts";
 import IconsUsers from "../icons/Users.vue";
 
 const props = defineProps<{

@@ -1,5 +1,6 @@
 import type { ArchiveMonth } from "../types/links";
 import { archiveMonths as staticArchiveMonths } from "../../data/content";
+import { useLinksData } from "./useLinksData";
 import {
   formatPersianWeekdayDate,
   persianDayKey,
@@ -15,6 +16,11 @@ interface ApiLink {
   categories: { id: string; label: string }[];
 }
 
+interface ApiCategory {
+  id: string;
+  label: string;
+}
+
 function domainOf(url: string) {
   try {
     return new URL(url).hostname.replace(/^www\./, "");
@@ -26,14 +32,19 @@ function domainOf(url: string) {
 const PREVIEW_COUNT = 3;
 
 export async function useArchiveData() {
+  // Static fallback only — the real category list comes from the DB fetch
+  // below. Used only if that fetch fails, same pattern as useHomeLinks.
+  const { categories: staticCategories } = useLinksData();
+
   const { data } = await useAsyncData(
     "archive-data",
     async () => {
       try {
-        const res = await $fetch<{ links: ApiLink[] }>("/api/links", {
-          query: { take: 500 },
-        });
-        return res.links;
+        const [linksRes, categoriesRes] = await Promise.all([
+          $fetch<{ links: ApiLink[] }>("/api/links", { query: { take: 500 } }),
+          $fetch<{ categories: ApiCategory[] }>("/api/categories"),
+        ]);
+        return { links: linksRes.links, categories: categoriesRes.categories };
       } catch {
         return null;
       }
@@ -41,8 +52,14 @@ export async function useArchiveData() {
     { getCachedData: () => undefined }
   );
 
+  const categories = computed<ApiCategory[]>(() =>
+    data.value?.categories && data.value.categories.length > 0
+      ? data.value.categories
+      : staticCategories
+  );
+
   const archiveMonths = computed<ArchiveMonth[]>(() => {
-    const links = data.value;
+    const links = data.value?.links;
 
     // null (fetch error) or empty → static fallback.
     if (!links || links.length === 0) return staticArchiveMonths;
@@ -103,5 +120,5 @@ export async function useArchiveData() {
       }));
   });
 
-  return { archiveMonths };
+  return { archiveMonths, categories };
 }

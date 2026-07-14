@@ -125,7 +125,7 @@
         <div class="field">
           <label class="field-label">دسته‌بندی‌ها</label>
           <div class="cat-pills">
-            <template v-for="category in submitCategories" :key="category.id">
+            <template v-for="category in availableCategories" :key="category.id">
               <input
                 :id="`c-${category.id}`"
                 v-model="categories"
@@ -157,7 +157,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { submitLinkSchema } from "#shared/validation/schemas";
-import { submitCategories } from "../../../data/content";
+import { submitCategories as staticSubmitCategories } from "../../../data/content";
 import { toPersian } from "../../utils/persian";
 import SubmitAsideArt from "../art/SubmitAsideArt.vue";
 
@@ -174,6 +174,20 @@ const [title, titleAttrs] = defineField("title", { validateOnModelUpdate: false 
 const [body, bodyAttrs] = defineField("body", { validateOnModelUpdate: false });
 const [credit, creditAttrs] = defineField("credit", { validateOnModelUpdate: false });
 const [categories] = defineField("categories", { validateOnModelUpdate: false });
+
+// The checkbox options shown here must match what links.post.ts actually
+// validates against (the real Category table) — a static list can drift
+// from the DB with nothing to catch it. Static data is a fallback for a
+// failed fetch only, not the primary source.
+const { data: categoriesData } = useAsyncData(
+  "submit-categories",
+  () => $fetch<{ categories: { id: string; label: string }[] }>("/api/categories").catch(() => null)
+);
+const availableCategories = computed(() =>
+  categoriesData.value?.categories && categoriesData.value.categories.length > 0
+    ? categoriesData.value.categories
+    : staticSubmitCategories
+);
 
 const submitted = ref(false);
 const submitting = ref(false);

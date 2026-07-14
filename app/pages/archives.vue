@@ -33,19 +33,17 @@
 
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import { useLinksData } from "../composables/useLinksData";
 import { useArchiveData } from "../composables/useArchiveData";
 import ArtArchiveHeroArt from "../components/art/ArchiveHeroArt.vue";
 
-const { categories } = useLinksData();
-const { archiveMonths } = await useArchiveData();
+const { archiveMonths, categories } = await useArchiveData();
 
 const searchQuery = ref("");
 const activeCategory = ref("");
 
 const filterChips = computed(() => [
   { id: "", label: "همه" },
-  ...categories.map((category) => ({ id: category.id, label: category.label })),
+  ...categories.value.map((category) => ({ id: category.id, label: category.label })),
 ]);
 
 function issueMatches(issueText: string, categoriesList: string[]) {

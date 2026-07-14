@@ -29,6 +29,7 @@
 </template>
 
 <script setup lang="ts">
+import apexchart from "vue3-apexcharts";
 import IconsGrid from "../icons/Grid.vue";
 
 const props = defineProps<{

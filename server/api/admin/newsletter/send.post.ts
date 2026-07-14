@@ -36,21 +36,47 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, message: "هیچ مشترکی وجود ندارد." });
   }
 
-  const { html, text } = buildDigestEmail(links);
+  const appUrl = process.env.APP_URL || "http://localhost:3000";
 
   const failures: string[] = [];
   for (const sub of subscribers) {
     try {
+      // Per-subscriber token so the unsubscribe link (both the one in the
+      // body and the List-Unsubscribe header) identifies this exact
+      // subscriber without them needing to be logged in.
+      const token = await createUnsubscribeToken(event, sub.email);
+      const unsubscribeUrl = `${appUrl}/unsubscribe?token=${token}`;
+      const { html, text } = buildDigestEmail(links, unsubscribeUrl);
+
       await sendMail({
         to: sub.email,
         subject: "بولتن — لینک‌های این هفته",
         html,
         text,
+        headers: {
+          // RFC 8058 one-click unsubscribe — lets Gmail/Outlook/etc. show
+          // their native "Unsubscribe" button next to the sender name.
+          "List-Unsubscribe": `<${appUrl}/api/newsletter/unsubscribe-link?token=${token}>`,
+          "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+        },
       });
     } catch (err) {
       console.error(`[newsletter] failed for ${sub.email}:`, err);
       failures.push(sub.email);
     }
+  }
+
+  // A fully failed run means something is wrong with the mail service
+  // itself (bad creds, wrong host/port, provider outage) — not "we sent it
+  // and a few addresses bounced". Marking links as notified here would
+  // silently bury this issue's newsletter: notifiedAt gets filtered out of
+  // future send candidates, so there'd be no way to pick these links again
+  // once the mail service is actually working.
+  if (failures.length === subscribers.length) {
+    throw createError({
+      statusCode: 502,
+      message: "ارسال به هیچ مشترکی موفق نبود. تنظیمات سرویس ایمیل را بررسی کنید.",
+    });
   }
 
   const now = new Date();

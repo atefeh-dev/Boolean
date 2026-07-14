@@ -52,6 +52,7 @@ model PasswordResetToken {
   usedAt    DateTime?
   createdAt DateTime @default(now())
 
+  @@index([userId])
   @@map("password_reset_tokens")
 }
 
@@ -120,6 +121,16 @@ model Link {
 
   categories Category[]
 
+  // (status) alone stays for any status-only lookups; the composites below
+  // match the actual WHERE+ORDER BY pairs the app runs — the archive page
+  // (status=PUBLISHED, order by publishedAt), the admin queue and
+  // admin-notifications (status=PENDING, order by createdAt), and a given
+  // user's notifications (their own links, filtered by status, ordered by
+  // updatedAt). Without these Postgres can use the single-column index for
+  // the filter but still has to sort separately.
   @@index([status])
+  @@index([status, publishedAt])
+  @@index([status, createdAt])
+  @@index([submittedById, status, updatedAt])
   @@map("links")
 }
