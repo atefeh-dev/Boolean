@@ -22,6 +22,7 @@ export default defineEventHandler(async (event) => {
       email: user.email,
       role: user.role,
       subscribed: !!user.subscriber,
+      emailVerified: !!user.emailVerifiedAt,
     },
   };
 });

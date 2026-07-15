@@ -80,12 +80,14 @@ const [password, passwordAttrs] = defineField("password", { validateOnModelUpdat
 
 const loading = ref(false)
 const errorMsg = ref("")
+const { showToast } = useToast()
 
 const onSubmit = handleSubmit(async (values) => {
   errorMsg.value = ""
   loading.value = true
   try {
     await register(values.name, values.email, values.password)
+    showToast("ایمیل تأیید برای شما ارسال شد — لطفاً صندوق ورودی خود را بررسی کنید.", 5000)
     const redirect = typeof route.query.redirect === "string" ? route.query.redirect : "/"
     router.push(redirect)
   } catch (err) {

@@ -1,3 +1,4 @@
+import { randomBytes } from "node:crypto";
 import { registerSchema } from "#shared/validation/schemas";
 
 export default defineEventHandler(async (event) => {
@@ -24,7 +25,29 @@ export default defineEventHandler(async (event) => {
     await prisma.subscriber.update({ where: { email: user.email }, data: { userId: user.id } });
   }
 
+  // Best-effort, same as the password reset email — a transient SMTP
+  // hiccup shouldn't fail registration itself (the account is already
+  // created and the session already set above). Worst case, the person
+  // just doesn't get a confirmation email this one time.
+  try {
+    const token = randomBytes(32).toString("hex");
+    const expiresAt = new Date(Date.now() + 48 * 3_600_000); // 48 hours
+
+    await prisma.emailVerificationToken.create({ data: { token, userId: user.id, expiresAt } });
+
+    const appUrl = process.env.APP_URL || "http://localhost:3000";
+    const verifyUrl = `${appUrl}/verify-email?token=${token}`;
+
+    const { subject, html, text } = buildVerificationEmail({ name: user.name, verifyUrl });
+    await sendMail({ to: user.email, subject, html, text });
+  } catch (err) {
+    console.error("[auth] verification email failed:", err);
+  }
+
   return {
-    user: { id: user.id, name: user.name, email: user.email, role: user.role, subscribed: !!subscriber },
+    user: {
+      id: user.id, name: user.name, email: user.email, role: user.role,
+      subscribed: !!subscriber, emailVerified: false,
+    },
   };
 });

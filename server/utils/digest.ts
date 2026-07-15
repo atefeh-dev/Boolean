@@ -4,7 +4,20 @@ interface DigestLink {
   body: string | null;
 }
 
-export function buildDigestEmail(links: DigestLink[], unsubscribeUrl: string) {
+interface DigestContent {
+  itemsHtml: string;
+  itemsText: string;
+}
+
+/**
+ * The newsletter content itself — identical for every recipient. Build
+ * this ONCE per send, not once per subscriber; only the unsubscribe URL
+ * actually varies per recipient (see wrapDigestEmail below). For a
+ * 5-link digest going to a few thousand subscribers, that's the
+ * difference between rendering this list once vs. thousands of times for
+ * byte-identical output.
+ */
+export function buildDigestContent(links: DigestLink[]): DigestContent {
   const itemsHtml = links
     .map(
       (l) => `
@@ -19,18 +32,25 @@ export function buildDigestEmail(links: DigestLink[], unsubscribeUrl: string) {
     )
     .join("");
 
+  const itemsText = links.map((l) => `${l.title}\n${l.url}`).join("\n\n");
+
+  return { itemsHtml, itemsText };
+}
+
+/** Cheap per-recipient step — just splices in this subscriber's unsubscribe URL. */
+export function wrapDigestEmail(content: DigestContent, unsubscribeUrl: string) {
   const html = `<div dir="rtl" style="font-family: Tahoma, sans-serif; max-width: 560px; margin: 0 auto;">
-    <h2 style="color: #24483d;">سایدبار — لینک‌های این هفته</h2>
-    <table style="width: 100%; border-collapse: collapse;">${itemsHtml}</table>
+    <h2 style="color: #24483d;">بولتن — لینک‌های این هفته</h2>
+    <table style="width: 100%; border-collapse: collapse;">${content.itemsHtml}</table>
     <p style="margin-top: 24px; font-size: 12px; color: #958878;">
-      این ایمیل برای شما ارسال شده چون در خبرنامه سایدبار عضو هستید. —
+      این ایمیل برای شما ارسال شده چون در خبرنامه بولتن عضو هستید. —
       <a href="${unsubscribeUrl}" style="color: #958878; text-decoration: underline;">لغو عضویت</a>
     </p>
   </div>`;
 
   const text =
-    "سایدبار — لینک‌های این هفته\n\n" +
-    links.map((l) => `${l.title}\n${l.url}`).join("\n\n") +
+    "بولتن — لینک‌های این هفته\n\n" +
+    content.itemsText +
     `\n\n---\nلغو عضویت: ${unsubscribeUrl}`;
 
   return { html, text };

@@ -56,6 +56,26 @@ model PasswordResetToken {
   @@map("password_reset_tokens")
 }
 
+// Longer-lived than PasswordResetToken (48h vs 1h) — verifying an email is
+// lower-stakes than granting account access, so there's less pressure to
+// expire it quickly, and more reason to give people a real chance to get
+// to it. Same shape/semantics otherwise (single-use, expiring), so it
+// mirrors PasswordResetToken deliberately rather than reusing a shared
+// generic table — the two have different lifetimes and consuming one
+// should never be confusable with consuming the other.
+model EmailVerificationToken {
+  id        String    @id @default(uuid())
+  token     String    @unique
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+  @@map("email_verification_tokens")
+}
+
 model User {
   id           String   @id @default(uuid())
   name         String
@@ -69,8 +89,15 @@ model User {
   // unread. Updated whenever the user opens the notifications panel.
   lastNotificationsReadAt DateTime?
 
+  // Null = unverified. Not currently used to gate login or any feature —
+  // just tracked and surfaced (see /api/auth/me) so a "please verify your
+  // email" banner or similar can be built on top of it later without
+  // another migration.
+  emailVerifiedAt DateTime?
+
   links       Link[]
   resetTokens PasswordResetToken[]
+  verificationTokens EmailVerificationToken[]
   dismissedNotifications NotificationDismissal[]
   subscriber  Subscriber?
 

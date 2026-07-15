@@ -22,24 +22,8 @@ export default defineEventHandler(async (event) => {
   const resetUrl = `${appUrl}/reset-password?token=${token}`;
 
   try {
-    await sendMail({
-      to: user.email,
-      subject: "بازیابی رمز عبور — بولتن",
-      text: `برای بازیابی رمز عبور روی لینک زیر کلیک کنید (۱ ساعت معتبر است):\n\n${resetUrl}`,
-      html: `<div dir="rtl" style="font-family:Tahoma,sans-serif;max-width:480px;margin:0 auto">
-        <h2 style="color:#24483d">بازیابی رمز عبور</h2>
-        <p>درخواست بازیابی رمز عبور برای حساب شما ثبت شد.</p>
-        <p style="margin:24px 0">
-          <a href="${resetUrl}" style="display:inline-block;padding:12px 28px;background:#24483d;color:#fff;border-radius:999px;text-decoration:none;font-weight:700">
-            بازیابی رمز عبور
-          </a>
-        </p>
-        <p style="font-size:13px;color:#958878">
-          این لینک تا ۱ ساعت دیگر معتبر است.<br>
-          اگر این درخواست را شما ارسال نکرده‌اید، این ایمیل را نادیده بگیرید.
-        </p>
-      </div>`,
-    });
+    const { subject, html, text } = buildPasswordResetEmail({ name: user.name, resetUrl });
+    await sendMail({ to: user.email, subject, html, text });
   } catch (err) {
     console.error("[auth] reset email failed:", err);
   }

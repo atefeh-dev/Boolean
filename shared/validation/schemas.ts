@@ -68,6 +68,10 @@ export const resetPasswordSchema = z.object({
   password: passwordSchema,
 });
 
+export const verifyEmailSchema = z.object({
+  token: z.string().min(1, "توکن نامعتبر است."),
+});
+
 // Client-side variant with the extra "confirm password" field.
 export const resetPasswordFormSchema = z
   .object({
@@ -124,5 +128,6 @@ export type LoginInput = z.infer<typeof loginSchema>;
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
 export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
+export type VerifyEmailInput = z.infer<typeof verifyEmailSchema>;
 export type ResetPasswordFormInput = z.infer<typeof resetPasswordFormSchema>;
 export type SubmitLinkInput = z.infer<typeof submitLinkSchema>;

@@ -30,6 +30,9 @@ export default defineEventHandler(async (event) => {
   }
 
   return {
-    user: { id: user.id, name: user.name, email: user.email, role: user.role, subscribed: !!subscriber },
+    user: {
+      id: user.id, name: user.name, email: user.email, role: user.role,
+      subscribed: !!subscriber, emailVerified: !!user.emailVerifiedAt,
+    },
   };
 });

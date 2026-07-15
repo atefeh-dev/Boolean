@@ -4,6 +4,7 @@ export interface AuthUser {
   email: string
   role: 'USER' | 'ADMIN'
   subscribed: boolean
+  emailVerified: boolean
 }
 
 interface MeResponse {
