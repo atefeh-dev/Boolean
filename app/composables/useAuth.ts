@@ -32,7 +32,7 @@ export function useAuth() {
 
   // On the server we need to forward the incoming request's cookies to
   // reach /api/auth/me; useRequestFetch does that for us automatically.
-  const fetcher = import.meta.server ? useRequestFetch() : $fetch
+  const fetcher = (import.meta.server ? useRequestFetch() : $fetch) as typeof $fetch
 
   async function fetchUser() {
     try {
