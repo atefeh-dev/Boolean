@@ -5,6 +5,7 @@
 @import './components/issues.css';
 @import './components/page-hero.css';
 @import './components/unsubscribe-modal.css';
+@import './components/verify-email-modal.css';
 @import './pages/archives.css';
 @import './pages/categories.css';
 @import './pages/submit.css';

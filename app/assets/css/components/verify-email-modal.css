@@ -1,0 +1,121 @@
+/* ── Verify email modal ── */
+.verify {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.verify__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 34, 28, 0.6);
+  backdrop-filter: blur(3px);
+}
+.verify__card {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  background: var(--surface);
+  border-radius: 28px;
+  box-shadow: 0 28px 72px rgba(15, 34, 28, 0.32);
+  padding: 8px 32px 36px;
+  text-align: center;
+}
+.verify__close {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: none;
+  background: var(--surface-sunken);
+  color: var(--ink-faint);
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+}
+.verify__close:hover {
+  background: var(--line);
+  color: var(--ink);
+}
+.verify__close svg {
+  width: 15px;
+  height: 15px;
+}
+
+.verify__icon {
+  width: 72px;
+  height: 72px;
+  margin: 36px auto 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--hero-paper);
+}
+.verify__icon svg {
+  width: 30px;
+  height: 30px;
+}
+
+.verify__body {
+  margin-top: 20px;
+}
+.verify__title {
+  font-family: var(--font);
+  font-size: 1.375rem;
+  font-weight: 800;
+  color: var(--ink);
+  margin: 0 0 8px;
+}
+.verify__subtitle {
+  font-family: var(--font-meta);
+  font-size: 0.9375rem;
+  color: var(--ink-soft);
+  line-height: 1.6;
+  margin: 0 0 16px;
+}
+.verify__hint {
+  font-family: var(--font-meta);
+  font-size: 0.875rem;
+  margin: 0 0 16px;
+}
+.verify__hint--success {
+  color: var(--forest);
+}
+.verify__hint--error {
+  color: var(--clay);
+}
+.verify__actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+/* ── Modal transition ── */
+.verify-fade-enter-active,
+.verify-fade-leave-active {
+  transition: opacity var(--dur-base) var(--ease);
+}
+.verify-fade-enter-from,
+.verify-fade-leave-to {
+  opacity: 0;
+}
+.verify-fade-enter-active .verify__card,
+.verify-fade-leave-active .verify__card {
+  transition: transform var(--dur-base) var(--ease-out), opacity var(--dur-base) var(--ease);
+}
+.verify-fade-enter-from .verify__card,
+.verify-fade-leave-to .verify__card {
+  transform: translateY(12px);
+  opacity: 0;
+}

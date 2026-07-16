@@ -402,6 +402,11 @@
         font-size: 0.8125rem;
         font-weight: 700;
         color: var(--ink);
+        /* Display-only — capitalizes each word for names typed in Latin
+           script (e.g. "ali reza" -> "Ali Reza"). No-op for Persian
+           script, which has no case, so this is harmless either way and
+           the stored name is never touched. */
+        text-transform: capitalize;
       }
       .user-menu__role {
         font-size: 0.6875rem;

@@ -54,7 +54,7 @@ export async function sendMail(opts: {
   headers?: Record<string, string>;
 }) {
   const transporter = getTransporter();
-  const from = process.env.SMTP_FROM || '"سایدبار" <hello@sidebar.fa>';
+  const from = process.env.SMTP_FROM || '"بولتن" <hello@booltan.app>';
 
   const info = await transporter.sendMail({
     from,

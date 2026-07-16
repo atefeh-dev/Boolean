@@ -61,6 +61,10 @@ export const forgotPasswordSchema = z.object({
   email: emailSchema,
 });
 
+export const resendVerificationSchema = z.object({
+  email: emailSchema,
+});
+
 // Server only receives { token, password } — confirmation matching is a
 // client-side-only UX check (see resetPasswordFormSchema below).
 export const resetPasswordSchema = z.object({
@@ -127,6 +131,7 @@ export type UnsubscribeTokenInput = z.infer<typeof unsubscribeTokenSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>;
+export type ResendVerificationInput = z.infer<typeof resendVerificationSchema>;
 export type ResetPasswordInput = z.infer<typeof resetPasswordSchema>;
 export type VerifyEmailInput = z.infer<typeof verifyEmailSchema>;
 export type ResetPasswordFormInput = z.infer<typeof resetPasswordFormSchema>;

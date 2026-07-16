@@ -18,6 +18,18 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 401, message: "ایمیل یا رمز عبور اشتباه است." });
   }
 
+  // Checked only now — after the password is already confirmed correct —
+  // so an unverified account's existence isn't leaked to someone who
+  // doesn't actually know the password. 403 (not 401) specifically, so
+  // the client can tell "wrong credentials" apart from "right
+  // credentials, not verified yet" without parsing the message text.
+  if (!user.emailVerifiedAt) {
+    throw createError({
+      statusCode: 403,
+      message: "ابتدا باید ایمیل خود را تأیید کنید. لینک تأیید را در ایمیل‌تان بررسی کنید.",
+    });
+  }
+
   await createSessionCookie(event, {
     sub: user.id, email: user.email, name: user.name, role: user.role,
   });

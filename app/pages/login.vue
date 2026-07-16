@@ -8,7 +8,9 @@
         <h1 class="auth-card__title">ورود</h1>
         <p class="auth-card__sub">به بولتن خوش آمدید.</p>
 
-        <p v-if="errorMsg" class="auth-error">{{ errorMsg }}</p>
+        <p v-if="errorMsg && !unverified" class="auth-error">
+          {{ errorMsg }}
+        </p>
 
         <form novalidate @submit.prevent="onSubmit">
           <SharedAuthField
@@ -49,6 +51,8 @@
         </p>
       </div>
     </div>
+
+    <SharedVerifyEmailModal v-model="unverified" :email="email" />
   </div>
 </template>
 
@@ -67,16 +71,26 @@ const [password, passwordAttrs] = defineField("password", { validateOnModelUpdat
 
 const loading = ref(false)
 const errorMsg = ref("")
+const unverified = ref(false)
 
 const onSubmit = handleSubmit(async (values) => {
   errorMsg.value = ""
+  unverified.value = false
   loading.value = true
   try {
     await login(values.email, values.password)
     const redirect = typeof route.query.redirect === "string" ? route.query.redirect : "/"
     router.push(redirect)
   } catch (err) {
-    errorMsg.value = err instanceof Error ? err.message : "خطایی رخ داد."
+    const statusCode = err instanceof Error ? (err as Error & { statusCode?: number }).statusCode : undefined
+    if (statusCode === 403) {
+      // Unverified account — the modal (not inline text) explains this and
+      // offers a resend action, rather than surfacing the raw "log in
+      // first"-style message that doesn't tell the person why they can't.
+      unverified.value = true
+    } else {
+      errorMsg.value = err instanceof Error ? err.message : "خطایی رخ داد."
+    }
   } finally {
     loading.value = false
   }

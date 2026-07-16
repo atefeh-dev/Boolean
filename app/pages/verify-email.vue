@@ -26,10 +26,10 @@
           </div>
           <h1 class="auth-card__title">ایمیل شما تأیید شد</h1>
           <p class="auth-card__sub">
-            حساب شما با موفقیت فعال شد.
+            حساب شما فعال شد. اکنون می‌توانید وارد شوید.
           </p>
-          <UiAppButton to="/" shape="rounded" size="lg" block class="auth-cta">
-            بازگشت به صفحه اصلی
+          <UiAppButton to="/login" shape="rounded" size="lg" block class="auth-cta">
+            ورود به حساب
           </UiAppButton>
         </template>
 
@@ -66,7 +66,6 @@ definePageMeta({ layout: "auth", title: "بولتن — تأیید ایمیل" }
 
 const route = useRoute()
 const token = computed(() => route.query.token as string | undefined)
-const { fetchUser } = useAuth()
 
 type Stage = "confirm" | "loading" | "done"
 const stage = ref<Stage>("confirm")
@@ -81,12 +80,6 @@ async function handleVerify() {
       body: { token: token.value },
     })
     stage.value = "done"
-    // Best-effort: only matters if they're logged in on this same
-    // browser/device — refreshes the badge without needing a reload.
-    // If they verified from a different device, there's simply no local
-    // auth state here to refresh. fetchUser() already catches its own
-    // errors internally, so no try/catch needed around it here.
-    fetchUser()
   } catch (err) {
     stage.value = "confirm"
     const msg = err && typeof err === "object" && "data" in err

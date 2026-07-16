@@ -1312,6 +1312,11 @@
   font-family: "Vazirmatn", Tahoma, Arial, sans-serif !important;
 }
 
+/* Space out legend items so they don't crowd each other */
+.apexcharts-legend-series {
+  gap: 8px;
+}
+
 /* Responsive */
 @media (max-width: 900px) {
   .dash-row-charts,

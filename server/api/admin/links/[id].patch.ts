@@ -21,7 +21,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, message: "عملیات نامعتبر است." });
   }
 
-  const existing = await prisma.link.findUnique({ where: { id } });
+  const existing = await prisma.link.findUnique({ where: { id }, select: { id: true } });
   if (!existing) {
     throw createError({ statusCode: 404, message: "لینک پیدا نشد." });
   }

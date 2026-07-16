@@ -13,19 +13,17 @@
 </template>
 
 <script setup lang="ts">
-/// <reference types="vue" />
-const props = defineProps<{
-  active?: boolean;
-  /** Pre-formatted count label (e.g. Persian numerals) shown as a small badge. */
-  count?: string | number;
-  size?: "sm" | "md";
-}>();
+withDefaults(
+  defineProps<{
+    active?: boolean;
+    /** Pre-formatted count label (e.g. Persian numerals) shown as a small badge. */
+    count?: string | number;
+    size?: "sm" | "md";
+  }>(),
+  { active: false, count: undefined, size: "md" }
+);
 
-const active = props.active ?? false;
-const count = props.count;
-const size = props.size ?? "md";
-
-// emits are used in the template via $emit; no runtime/TS declaration needed here
+defineEmits<{ click: [MouseEvent] }>();
 </script>
 
 <style scoped>

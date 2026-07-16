@@ -169,6 +169,8 @@ const { defineField, errors, handleSubmit, resetForm } = useZodForm(submitLinkSc
   categories: [],
 });
 
+const { logout } = useAuth();
+
 const [url, urlAttrs] = defineField("url", { validateOnModelUpdate: false });
 const [title, titleAttrs] = defineField("title", { validateOnModelUpdate: false });
 const [body, bodyAttrs] = defineField("body", { validateOnModelUpdate: false });
@@ -212,6 +214,23 @@ const onSubmit = handleSubmit(async (values) => {
     await $fetch("/api/links", { method: "POST", body: values });
     submitted.value = true;
   } catch (err) {
+    const statusCode =
+      err && typeof err === "object" && "data" in err
+        ? (err as { data?: { statusCode?: number } }).data?.statusCode
+        : undefined;
+
+    if (statusCode === 401) {
+      // The nav can still say "logged in" from a cached client-side state
+      // even though the server just rejected the session (e.g. the DB was
+      // reset while an old cookie was still around). Showing a permanent
+      // "please log in" banner here would be confusing since the UI still
+      // looks logged in — clear the stale state and send them to log back
+      // in properly instead.
+      await logout();
+      await navigateTo({ path: "/login", query: { redirect: "/submit" } });
+      return;
+    }
+
     const msg =
       err && typeof err === "object" && "data" in err
         ? (err as { data?: { message?: string } }).data?.message

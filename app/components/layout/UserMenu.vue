@@ -60,7 +60,7 @@ const emit = defineEmits<{ logout: []; unsubscribe: [] }>()
 const open = ref(false)
 const root = ref<HTMLElement | null>(null)
 
-const initial = computed(() => props.name?.trim()?.charAt(0) ?? '؟')
+const initial = computed(() => props.name?.trim()?.charAt(0)?.toUpperCase() ?? '؟')
 
 function handleLogout() {
   open.value = false

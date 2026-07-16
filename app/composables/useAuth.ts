@@ -32,7 +32,7 @@ export function useAuth() {
 
   // On the server we need to forward the incoming request's cookies to
   // reach /api/auth/me; useRequestFetch does that for us automatically.
-  const fetcher = (import.meta.server ? useRequestFetch() : $fetch) as typeof $fetch
+  const fetcher = import.meta.server ? useRequestFetch() : $fetch
 
   async function fetchUser() {
     try {
@@ -64,7 +64,17 @@ export function useAuth() {
       await fetchUser()
       return user.value
     } catch (err) {
-      throw new Error(extractErrorMessage(err, 'ورود ناموفق بود.'))
+      // Preserve the status code on the re-thrown error (not just the
+      // message) — login.vue needs to tell "wrong credentials" (401) apart
+      // from "right credentials, email not verified yet" (403) to decide
+      // whether to offer a resend-verification action, and matching
+      // Persian message text for that would be fragile.
+      const statusCode = err && typeof err === 'object' && 'data' in err
+        ? (err as { data?: { statusCode?: number } }).data?.statusCode
+        : undefined
+      const wrapped = new Error(extractErrorMessage(err, 'ورود ناموفق بود.')) as Error & { statusCode?: number }
+      wrapped.statusCode = statusCode
+      throw wrapped
     }
   }
 
@@ -74,8 +84,10 @@ export function useAuth() {
         method: 'POST',
         body: { name, email, password },
       })
-      await fetchUser()
-      return user.value
+      // No fetchUser() here, deliberately — registration no longer starts
+      // a session (login is gated on email verification; see
+      // register.post.ts / login.post.ts). The caller should route to a
+      // "check your email" state, not treat this like a successful login.
     } catch (err) {
       throw new Error(extractErrorMessage(err, 'ثبت‌نام ناموفق بود.'))
     }

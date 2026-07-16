@@ -3,13 +3,13 @@ services:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_USER: sidebar
-      POSTGRES_PASSWORD: sidebar
-      POSTGRES_DB: sidebar
+      POSTGRES_USER: booltan
+      POSTGRES_PASSWORD: booltan
+      POSTGRES_DB: booltan
     ports:
       - "5432:5432"
     volumes:
-      - sidebar_pgdata:/var/lib/postgresql/data
+      - booltan_pgdata:/var/lib/postgresql/data
 
 volumes:
-  sidebar_pgdata:
+  booltan_pgdata:

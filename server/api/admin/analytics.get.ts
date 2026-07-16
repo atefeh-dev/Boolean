@@ -25,7 +25,7 @@ export default defineEventHandler(async (event) => {
     recentPublished,
     oldestPending5, oldPendingCount, veryOldCount,
     recentSubscribers, lastNewsletter, newsletterReadyCount,
-    newSubsThisWeek, newSubsLastWeek, newSubsToday,
+    newSubsThisWeek, newSubsLastWeek, newSubsToday, membersSubscribedToday,
     categoriesWithCounts,
     totalUserSubmitted, totalApproved, totalRejected,
     topContributorGroups,
@@ -74,6 +74,14 @@ export default defineEventHandler(async (event) => {
     prisma.subscriber.count({ where: { createdAt: { gte: weekAgo } } }),
     prisma.subscriber.count({ where: { createdAt: { gte: twoWeekAgo, lt: weekAgo } } }),
     prisma.subscriber.count({ where: { createdAt: { gte: todayStart } } }),
+    // Same window, but scoped to accounts only — this is the one that
+    // belongs in the Members panel. The unscoped count above (guest +
+    // member subscribers combined) is correct for the generic "new
+    // subscribers today" figure elsewhere, but showing it inside a
+    // panel that's otherwise entirely about registered members made a
+    // guest-only subscription tick up a "members" badge with nothing on
+    // the member side to explain it.
+    prisma.subscriber.count({ where: { createdAt: { gte: todayStart }, userId: { not: null } } }),
 
     // Category distribution, computed by Postgres (count + most-recent
     // publish date per category) instead of pulling every published link's
@@ -307,7 +315,7 @@ export default defineEventHandler(async (event) => {
     subscribers: { total: subscriberCount, newThisWeek: newSubsThisWeek, newLastWeek: newSubsLastWeek, newToday: newSubsToday },
     members: {
       total: userCount,
-      subscribedToday: newSubsToday,
+      subscribedToday: membersSubscribedToday,
       subscribed: userCount - notSubscribedCount,
       notSubscribed: notSubscribedCount,
     },

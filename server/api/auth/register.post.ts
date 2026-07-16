@@ -7,17 +7,26 @@ export default defineEventHandler(async (event) => {
 
   const { name, email, password } = await validateBody(event, registerSchema);
 
-  const existing = await prisma.user.findUnique({ where: { email } });
+  // These two are independent of each other — hashing doesn't need to know
+  // yet whether the email is taken — so run them concurrently instead of
+  // paying for both round trips back to back. (Can't go further than this:
+  // creating the user genuinely has to wait for both — bcrypt result to
+  // store, and the existence check to know whether to proceed at all.)
+  const [existing, passwordHash] = await Promise.all([
+    prisma.user.findUnique({ where: { email } }),
+    hashPassword(password),
+  ]);
   if (existing) {
     throw createError({ statusCode: 409, message: "این ایمیل قبلاً ثبت شده است." });
   }
 
-  const passwordHash = await hashPassword(password);
   const user = await prisma.user.create({ data: { name, email, passwordHash } });
 
-  await createSessionCookie(event, {
-    sub: user.id, email: user.email, name: user.name, role: user.role,
-  });
+  // No createSessionCookie here, deliberately — login is now gated on
+  // emailVerifiedAt (see login.post.ts), so starting a session at this
+  // point would just be a session nobody can use for anything that
+  // actually checks verification later, and would make the register page
+  // look like it succeeded into a logged-in state when it didn't.
 
   // Same email could already be on the newsletter list anonymously.
   const subscriber = await prisma.subscriber.findUnique({ where: { email: user.email } });
@@ -25,10 +34,10 @@ export default defineEventHandler(async (event) => {
     await prisma.subscriber.update({ where: { email: user.email }, data: { userId: user.id } });
   }
 
-  // Best-effort, same as the password reset email — a transient SMTP
-  // hiccup shouldn't fail registration itself (the account is already
-  // created and the session already set above). Worst case, the person
-  // just doesn't get a confirmation email this one time.
+  // Best-effort — a transient SMTP hiccup shouldn't fail registration
+  // itself (the account is already created above). Worst case, the
+  // person doesn't get the email this one time and uses "resend" on the
+  // login page once they try to sign in.
   try {
     const token = randomBytes(32).toString("hex");
     const expiresAt = new Date(Date.now() + 48 * 3_600_000); // 48 hours
@@ -44,10 +53,5 @@ export default defineEventHandler(async (event) => {
     console.error("[auth] verification email failed:", err);
   }
 
-  return {
-    user: {
-      id: user.id, name: user.name, email: user.email, role: user.role,
-      subscribed: !!subscriber, emailVerified: false,
-    },
-  };
+  return { ok: true };
 });

@@ -69,16 +69,39 @@ async function main() {
   }
   console.log("Seeded " + seededLinks + " demo links as published records.");
 
+  // Seeded accounts are pre-verified — emailVerifiedAt is set directly
+  // rather than going through the real signup-email-click flow, since
+  // there's no inbox to click a link in for a local seed run. Real
+  // signups still go through verify-email normally; this only skips it
+  // for accounts created by this script.
   const adminEmail = process.env.ADMIN_EMAIL;
   const adminPassword = process.env.ADMIN_PASSWORD;
   if (adminEmail && adminPassword) {
     const passwordHash = await bcrypt.hash(adminPassword, 10);
     await prisma.user.upsert({
       where: { email: adminEmail.toLowerCase() },
-      update: { role: "ADMIN" },
-      create: { name: "Admin", email: adminEmail.toLowerCase(), passwordHash, role: "ADMIN" },
+      update: { role: "ADMIN", emailVerifiedAt: new Date() },
+      create: {
+        name: "Admin", email: adminEmail.toLowerCase(), passwordHash,
+        role: "ADMIN", emailVerifiedAt: new Date(),
+      },
     });
     console.log("Admin user ready: " + adminEmail);
+  }
+
+  const testEmail = process.env.TEST_USER_EMAIL;
+  const testPassword = process.env.TEST_USER_PASSWORD;
+  if (testEmail && testPassword) {
+    const passwordHash = await bcrypt.hash(testPassword, 10);
+    await prisma.user.upsert({
+      where: { email: testEmail.toLowerCase() },
+      update: { role: "USER", emailVerifiedAt: new Date() },
+      create: {
+        name: "Test User", email: testEmail.toLowerCase(), passwordHash,
+        role: "USER", emailVerifiedAt: new Date(),
+      },
+    });
+    console.log("Test user ready: " + testEmail);
   }
 }
 
