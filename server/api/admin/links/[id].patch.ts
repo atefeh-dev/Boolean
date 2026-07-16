@@ -47,9 +47,11 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, message: "عنوان نمی‌تواند خالی باشد." });
   }
 
-  // Bug #3 fix: [] is truthy in JS, so we must check .length > 0 before
-  // using { set: [...] } — otherwise saving with no categories selected
-  // would disconnect ALL category relations from the link.
+  // An empty array is still truthy in JS, so `edits.categories !== undefined`
+  // alone isn't enough here — it would also pass for "user cleared every
+  // category". Only build the { set: [...] } update when there's at least
+  // one id, otherwise a save with no categories selected would disconnect
+  // ALL category relations from the link instead of being a no-op.
   let categoryUpdate: { set: { id: string }[] } | undefined;
   if (edits.categories !== undefined && edits.categories.length > 0) {
     const categoryIds = Array.from(new Set(edits.categories)).slice(0, 3);

@@ -4,8 +4,9 @@ import { Pool } from "pg";
 
 // One Pool shared across the process — pg.Pool manages the connection
 // lifecycle and ensures writes are properly committed.
-// (Passing a plain { connectionString } object instead of a Pool instance
-// was bug #1: Prisma 7's PrismaPg adapter requires an actual pg.Pool.)
+// Note: Prisma 7's PrismaPg adapter requires an actual pg.Pool instance
+// here — passing a plain { connectionString } object instead compiles
+// fine but fails at runtime, so don't "simplify" this back to that.
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
   pgPool: Pool | undefined;

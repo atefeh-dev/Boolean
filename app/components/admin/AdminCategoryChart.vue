@@ -38,7 +38,9 @@ const props = defineProps<{
 
 const toP = (n: number) => String(n).replace(/\d/g, d => "۰۱۲۳۴۵۶۷۸۹"[+d]);
 
-// Top 7 with remainder grouped
+// The donut only has room to label a handful of slices legibly, so show
+// the top 7 categories individually and fold everything past that into a
+// single "rest" slice below rather than crowding the chart with slivers.
 const TOP = 7;
 const sorted  = computed(() => [...props.categories].sort((a, b) => b.publishedCount - a.publishedCount));
 const visible = computed(() => sorted.value.slice(0, TOP).filter(c => c.publishedCount > 0));
