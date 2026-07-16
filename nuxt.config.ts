@@ -71,15 +71,12 @@ export default defineNuxtConfig({
           "X-Content-Type-Options": "nosniff",
         },
       },
-      // ...except these two: public, unauthenticated, identical for every
-      // visitor, and hit on every page load (home, archive, category
-      // pages). `swr` serves a cached response immediately and revalidates
-      // in the background, so most requests never touch Postgres at all —
-      // safe for content that changes a handful of times a day, not on
-      // every request. More specific paths win over the `/api/**` rule
-      // above, so this correctly overrides the no-store default just for
-      // these two routes.
-      "/api/links": { swr: 300 },
+      // Categories is a GET-only, public endpoint and can safely use SWR.
+      // Do not cache `/api/links` here: that URL is shared by the public GET
+      // list and the authenticated POST submission. Nitro route rules apply
+      // to every HTTP method, so caching it can hide the POST request's
+      // session cookie and incorrectly return 401, redirecting valid users
+      // to `/login`.
       "/api/categories": { swr: 3600 },
     },
   },

@@ -28,6 +28,7 @@
 
 <script setup lang="ts">
 import type { ArchiveIssue } from "../../types/links";
+import { toPersian } from "../../utils/persian";
 
 defineProps<{
   issue: ArchiveIssue;

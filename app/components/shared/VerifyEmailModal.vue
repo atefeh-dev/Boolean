@@ -17,10 +17,9 @@
           </div>
 
           <div class="verify__body">
-            <h2 id="verify-title" class="verify__title">ایمیل شما تأیید نشده است</h2>
+            <h2 id="verify-title" class="verify__title">{{ title }}</h2>
             <p class="verify__subtitle">
-              ایمیل شما تأیید نشده است. لطفاً پیش از ورود، ایمیل خود را با استفاده از لینکی که برایتان ارسال
-              کرده‌ایم تأیید کنید. لینک تأیید به آدرس <strong dir="ltr">{{ email }}</strong> ارسال شده است.
+              {{ message }} لینک تأیید به آدرس <strong dir="ltr">{{ email }}</strong> ارسال شده است.
             </p>
 
             <p v-if="resendState === 'sent'" class="verify__hint verify__hint--success">
@@ -50,7 +49,15 @@
 <script setup lang="ts">
 const open = defineModel<boolean>({ default: false })
 
-const props = defineProps<{ email: string }>()
+const {
+  email,
+  title = "ایمیل شما تأیید نشده است",
+  message = "ایمیل شما تأیید نشده است. لطفاً پیش از ورود، ایمیل خود را با استفاده از لینکی که برایتان ارسال کرده‌ایم تأیید کنید.",
+} = defineProps<{
+  email: string;
+  title?: string;
+  message?: string;
+}>()
 
 type ResendState = "idle" | "sending" | "sent" | "error"
 const resendState = ref<ResendState>("idle")
@@ -69,7 +76,7 @@ async function handleResend() {
   try {
     await $fetch("/api/auth/resend-verification", {
       method: "POST",
-      body: { email: props.email },
+      body: { email },
     })
     resendState.value = "sent"
   } catch {

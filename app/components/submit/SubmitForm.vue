@@ -151,6 +151,13 @@
         </UiAppButton>
       </form>
     </div>
+
+    <SharedVerifyEmailModal
+      v-model="showVerifyModal"
+      :email="user?.email ?? ''"
+      title="ابتدا ایمیل خود را تأیید کنید"
+      message="پیش از ارسال لینک، باید ایمیل خود را تأیید کنید. لطفاً ایمیل خود را بررسی کرده و از لینک تأییدی که برایتان ارسال شده استفاده کنید."
+    />
   </div>
 </template>
 
@@ -169,7 +176,7 @@ const { defineField, errors, handleSubmit, resetForm } = useZodForm(submitLinkSc
   categories: [],
 });
 
-const { logout } = useAuth();
+const { logout, user } = useAuth();
 
 const [url, urlAttrs] = defineField("url", { validateOnModelUpdate: false });
 const [title, titleAttrs] = defineField("title", { validateOnModelUpdate: false });
@@ -194,6 +201,7 @@ const availableCategories = computed(() =>
 const submitted = ref(false);
 const submitting = ref(false);
 const serverError = ref("");
+const showVerifyModal = ref(false);
 
 const titleRemaining = computed(() => 80 - (title.value?.length ?? 0));
 const bodyRemaining = computed(() => 150 - (body.value?.length ?? 0));
@@ -228,6 +236,15 @@ const onSubmit = handleSubmit(async (values) => {
       // in properly instead.
       await logout();
       await navigateTo({ path: "/login", query: { redirect: "/submit" } });
+      return;
+    }
+
+    if (statusCode === 403) {
+      // Authenticated, but the account's email isn't verified yet — this
+      // is NOT "not logged in", so it must not redirect to /login (a
+      // verified, authenticated user submitting a link should never be
+      // sent there). Explain what's actually blocking them instead.
+      showVerifyModal.value = true;
       return;
     }
 

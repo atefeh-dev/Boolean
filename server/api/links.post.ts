@@ -6,6 +6,24 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 401, message: "ابتدا وارد شوید." });
   }
 
+  // getVerifiedSessionUser only confirms the account still exists — it
+  // doesn't check verification status, since most session-gated endpoints
+  // (notifications, unsubscribe, ...) don't need to. Submitting a link
+  // does, so that's checked here specifically rather than baked into the
+  // shared helper. 403 (not 401) so the client can tell "not logged in"
+  // apart from "logged in, but not verified yet" and show the right UI
+  // for each instead of just bouncing to /login either way.
+  const user = await prisma.user.findUnique({
+    where: { id: session.sub },
+    select: { emailVerifiedAt: true },
+  });
+  if (!user?.emailVerifiedAt) {
+    throw createError({
+      statusCode: 403,
+      message: "شما باید پیش از ارسال لینک، ایمیل خود را تأیید کنید. لطفاً ایمیل خود را بررسی کرده و از لینک تأییدی که برایتان ارسال شده استفاده کنید.",
+    });
+  }
+
   // 20 submissions per hour per user — prevents spam
   enforceRateLimit(`submit:${session.sub}`, 20, 60 * 60_000);
 

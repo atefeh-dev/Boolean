@@ -14,18 +14,20 @@
 </template>
 
 <script setup lang="ts">
-import { categoryCards as staticCategoryCards } from '../../../data/content'
+import { computed } from "vue";
+import { categoryCards as staticCategoryCards } from "../../../data/content";
+import { toPersian } from "../../utils/persian";
 
 interface CategoryCard {
-  id: string
-  label: string
-  count: number
+  id: string;
+  label: string;
+  count: number;
 }
 
-const props = defineProps<{ cards?: CategoryCard[] }>()
-const cards = computed(() => props.cards ?? staticCategoryCards)
+const props = defineProps<{ cards?: CategoryCard[] }>();
+const cards = computed(() => props.cards ?? staticCategoryCards);
 
 const emit = defineEmits<{
-  select: [categoryId: string]
-}>()
+  select: [categoryId: string];
+}>();
 </script>
